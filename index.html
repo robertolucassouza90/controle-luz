@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1B74C5">
+<meta name="theme-color" content="#2C6E9C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Controle de Luz">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
 <style>
-:root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px)}
+:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;font:14px system-ui,sans-serif}
 img{max-width:100%}
 [hidden]{display:none!important}
@@ -19,40 +20,28 @@ img{max-width:100%}
 <title>Controle de Luz</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Public+Sans:wght@300;400;500;600;700&display=swap">
 <style>
-/* Layout: coluna única de celular (máx. 520px). Cabeçalho, chips de aps, duas telas (Leitura e Demonstrativo) e um dock fixo com ação principal + abas. */
+/* Layout: coluna única de celular (máx. 520px) sobre fundo em degradê (azul-petróleo, roxo, magenta, noite) com cartões de vidro escuro. Rosa quente só nas ações principais, verde-água nos detalhes e no estado ativo. Visual escuro único, escolhido de propósito. */
 :root{
-  --bg:#EAEFF5; --surface:#FFFFFF; --field:#F0F3F8; --ink:#0E1A2B; --muted:#586A80;
-  --line:#D9E1EA; --line-strong:#B7C4D3;
-  --brand:#1B74C5; --on-brand:#FFFFFF; --brand-soft:#E1EEFA; --mark-bg:rgba(255,255,255,.2); --bar:#BFD3E8;
-  --dial-bg:#0E1A2B; --dial-fg:#FFC53D; --dial-dec:#FF7F6B; --dial-dim:#44556B;
-  --good:#17784A; --good-soft:#E1F3E9; --warn:#9A5208; --warn-soft:#FDF0DA;
-  --danger:#BE3224; --danger-soft:#FBE8E5; --on-danger:#FFFFFF;
-  --qr-bg:#FFFFFF; --qr-fg:#0E1A2B;
+  color-scheme:dark;
+  --bg:#100A2E;
+  --glass:rgba(14,9,42,.58); --glass-strong:rgba(14,9,42,.84);
+  --field:rgba(255,255,255,.09);
+  --ink:#FFFFFF; --muted:#CBC3E3;
+  --line:rgba(255,255,255,.17); --line-strong:rgba(255,255,255,.36);
+  --teal:#5FD8D2; --mint:#CDF6F2; --teal-soft:rgba(95,216,210,.16);
+  --hot-a:#DC1650; --hot-b:#F23F70; --on-hot:#FFFFFF;
+  --good:#7EF0BD; --good-soft:rgba(126,240,189,.15);
+  --warn:#FFCB77; --warn-soft:rgba(255,203,119,.16);
+  --danger:#FFA3B5; --danger-soft:rgba(255,92,128,.2);
+  --dial-bg:#07041C; --dial-fg:#CDF6F2; --dial-dec:#FF8AA6; --dial-dim:#3A3560;
+  --toast-bg:#FFFFFF; --toast-fg:#12092E; --toast-link:#B3123F;
   --font-display:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
   --font-body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --font-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0A1220; --surface:#121D2E; --field:#1A283C; --ink:#E7EEF7; --muted:#97A8BD;
-    --line:#233248; --line-strong:#3A4D68;
-    --brand:#5BB1F2; --on-brand:#04111F; --brand-soft:#17304B; --mark-bg:rgba(4,17,31,.16); --bar:#2F4A68;
-    --dial-bg:#060B14; --dial-fg:#FFC53D; --dial-dec:#FF8A78; --dial-dim:#33445A;
-    --good:#5FD39A; --good-soft:#143325; --warn:#F2B05E; --warn-soft:#3A2B12;
-    --danger:#FF8F82; --danger-soft:#3C1A17; --on-danger:#1B0705;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0A1220; --surface:#121D2E; --field:#1A283C; --ink:#E7EEF7; --muted:#97A8BD;
-  --line:#233248; --line-strong:#3A4D68;
-  --brand:#5BB1F2; --on-brand:#04111F; --brand-soft:#17304B; --mark-bg:rgba(4,17,31,.16); --bar:#2F4A68;
-  --dial-bg:#060B14; --dial-fg:#FFC53D; --dial-dec:#FF8A78; --dial-dim:#33445A;
-  --good:#5FD39A; --good-soft:#143325; --warn:#F2B05E; --warn-soft:#3A2B12;
-  --danger:#FF8F82; --danger-soft:#3C1A17; --on-danger:#1B0705;
-  color-scheme:dark;
-}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
 body{
   background:var(--bg); color:var(--ink);
   font:400 15px/1.45 var(--font-body);
@@ -61,67 +50,75 @@ body{
   padding-right:max(16px,env(safe-area-inset-right,0px));
   -webkit-text-size-adjust:100%;
 }
+.bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(75% 40% at 90% 0%,rgba(95,216,210,.5),rgba(95,216,210,0) 70%),
+    radial-gradient(85% 48% at 0% 80%,rgba(224,25,95,.6),rgba(224,25,95,0) 70%),
+    linear-gradient(165deg,#2C6E9C 0%,#5A3A89 28%,#8E1F66 58%,#2B0F42 82%,#0D0A28 100%)}
 button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-.app{max-width:520px;margin:0 auto}
+.app{position:relative;z-index:1;max-width:520px;margin:0 auto}
 main{padding-bottom:130px}
 body[data-tab="leitura"] main{padding-bottom:190px}
 .ic{width:20px;height:20px;flex:none}
-:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 
 /* cabeçalho */
 .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0 14px}
 .titles{min-width:0}
-.eyebrow{margin:0 0 4px;font:600 11px/1.3 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
-h1{margin:0;font:800 28px/1.1 var(--font-display);letter-spacing:-.01em;text-wrap:balance}
-.icon-btn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center}
+.eyebrow{margin:0 0 6px;font:600 11px/1.3 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mint)}
+h1{margin:0;font:800 30px/1.05 var(--font-display);letter-spacing:-.02em;text-wrap:balance}
+.icon-btn{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid var(--teal);background:rgba(14,9,42,.4);color:var(--mint);display:grid;place-items:center}
 
 /* chips */
-.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:2px 16px 12px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--font-body);display:inline-flex;align-items:center;gap:6px}
-.chip.on{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
-.chip.add{border-style:dashed;border-color:var(--brand);color:var(--brand);background:transparent}
+.chips,.scope{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:2px 16px 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar,.scope::-webkit-scrollbar{display:none}
+.chip{flex:none;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line-strong);background:rgba(14,9,42,.42);color:var(--ink);font:600 14px var(--font-body);display:inline-flex;align-items:center;gap:6px}
+.chip.on{background:linear-gradient(135deg,var(--hot-a),var(--hot-b));border-color:transparent;color:var(--on-hot);box-shadow:0 6px 18px rgba(224,25,95,.4)}
+.chip.add{border-style:dashed;border-color:var(--teal);color:var(--mint);background:transparent}
 .chip .ic{width:16px;height:16px}
 
 /* seções e cartões */
-.sec{margin:22px 4px 10px;font:700 11px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:14px}
+.sec{margin:22px 4px 10px;font:700 11px/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mint)}
+.card{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--line);border-radius:22px;padding:16px;display:grid;gap:14px;box-shadow:0 10px 30px rgba(6,3,24,.28)}
 .card.tight{padding:12px}
-.note{border-color:var(--brand);background:var(--brand-soft);gap:10px}
+.stack{display:grid;gap:12px}
+.note{border-left:4px solid var(--teal);gap:10px}
 .note p{margin:0}
 .note strong{font-weight:700}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .g-un{display:grid;grid-template-columns:96px 1fr;gap:12px}
+.g-mes{display:grid;grid-template-columns:3fr 2fr;gap:12px}
 .field{display:grid;gap:6px;min-width:0}
 .lab-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 8px}
 .lab{font:600 11px/1.2 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .hint{font-size:12px;font-style:italic;color:var(--muted)}
-.input{width:100%;min-width:0;height:52px;padding:0 14px;border-radius:12px;border:1.5px solid transparent;background:var(--field);font:500 17px var(--font-body);color:var(--ink);display:flex;align-items:center;appearance:none;-webkit-appearance:none}
-.input::placeholder{color:var(--muted);opacity:.7}
-input.input:focus{outline:none;border-color:var(--brand);background:var(--surface)}
+.input{width:100%;min-width:0;height:52px;padding:0 14px;border-radius:14px;border:1.5px solid transparent;background:var(--field);font:500 17px var(--font-body);color:var(--ink);display:flex;align-items:center;appearance:none;-webkit-appearance:none}
+.input::placeholder{color:var(--muted);opacity:.65}
 .input.num{font-family:var(--font-mono);font-weight:500}
 .input.ro{color:var(--muted);font-family:var(--font-mono)}
+input.input:focus{outline:none;border-color:var(--teal);background:rgba(255,255,255,.15)}
 .input[aria-invalid="true"]{border-color:var(--danger)}
-.err{margin:0;padding:10px 12px;border-radius:10px;background:var(--danger-soft);color:var(--danger);font-weight:600;font-size:13px}
+.err{margin:0;padding:10px 12px;border-radius:12px;background:var(--danger-soft);color:var(--danger);font-weight:600;font-size:13px}
 .err:empty{display:none}
 
-/* seletor de mês */
-.stepper{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;height:52px;border-radius:12px;background:var(--field)}
-.stepper .step{height:52px;border:0;background:transparent;color:var(--brand);display:grid;place-items:center;border-radius:12px;padding:0}
+/* seletor de mês e de período */
+.stepper{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;height:52px;border-radius:14px;background:var(--field)}
+.stepper .step{height:52px;border:0;background:transparent;color:var(--teal);display:grid;place-items:center;border-radius:14px;padding:0}
 .mes-label{text-align:center;font:600 16px var(--font-body);white-space:nowrap}
-.g-mes{display:grid;grid-template-columns:3fr 2fr;gap:12px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:999px;background:var(--field)}
+.seg button{height:38px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:600 13px var(--font-body)}
+.seg button[aria-pressed="true"]{background:linear-gradient(135deg,var(--hot-a),var(--hot-b));color:var(--on-hot)}
 
-/* mostrador de consumo (hodômetro) */
-.meter{display:grid;gap:10px;padding:14px;border-radius:14px;background:var(--brand-soft)}
+/* mostrador de consumo */
+.meter{display:grid;gap:10px;padding:14px;border-radius:16px;background:linear-gradient(135deg,rgba(95,216,210,.2),rgba(224,25,95,.26));border:1px solid var(--line)}
 .dial{display:flex;align-items:center;gap:3px;flex-wrap:wrap}
-.d{display:grid;place-items:center;width:30px;height:46px;border-radius:6px;background:var(--dial-bg);color:var(--dial-fg);font:600 26px/1 var(--font-mono);box-shadow:inset 0 -12px 12px rgba(0,0,0,.3)}
+.d{display:grid;place-items:center;width:30px;height:46px;border-radius:7px;background:var(--dial-bg);color:var(--dial-fg);font:600 26px/1 var(--font-mono);box-shadow:inset 0 -12px 12px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.08)}
 .d.z{color:var(--dial-dim)}
 .d.dec{color:var(--dial-dec)}
 .dial .sep{font:600 26px/1 var(--font-mono);padding:0 1px;align-self:flex-end;padding-bottom:6px}
-.dial .unit{margin-left:8px;font:600 13px var(--font-mono);letter-spacing:.06em;color:var(--muted)}
-.meter .big-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.dial .unit{margin-left:8px;font:600 13px var(--font-mono);letter-spacing:.06em;color:var(--mint)}
+.dial.dim{justify-content:center}
 
 /* cálculo */
 .calc{margin:0;display:grid;gap:8px}
@@ -133,45 +130,45 @@ input.input:focus{outline:none;border-color:var(--brand);background:var(--surfac
 .calc .tot dd{font:600 24px var(--font-mono)}
 
 /* botões */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 18px;border-radius:14px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink);font:600 15px var(--font-body);text-decoration:none;text-align:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:10px 18px;border-radius:999px;border:1.5px solid var(--teal);background:rgba(14,9,42,.4);color:var(--mint);font:700 14px/1.2 var(--font-body);letter-spacing:.03em;text-transform:uppercase;text-decoration:none;text-align:center}
 .btn:active{transform:translateY(1px)}
-.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.btn.primary{background:linear-gradient(135deg,var(--hot-a),var(--hot-b));border-color:transparent;color:var(--on-hot);box-shadow:0 10px 26px rgba(224,25,95,.45)}
 .btn.block{width:100%}
-.btn.sm{min-height:44px;font-size:14px}
-.btn.danger{color:var(--danger);border-color:var(--line-strong)}
-.btn.danger-fill{background:var(--danger);border-color:var(--danger);color:var(--on-danger)}
+.btn.sm{min-height:44px;font-size:13px}
+.btn.danger{color:var(--danger);border-color:rgba(255,163,181,.55)}
+.btn.danger-fill{background:var(--hot-a);border-color:var(--hot-a);color:#fff}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .del{display:grid;gap:10px;padding-top:4px}
 .del p{margin:0;font-size:14px}
 
 /* dock */
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--glass-strong);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-top:1px solid var(--line);
   padding:10px max(16px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(16px,env(safe-area-inset-left,0px))}
 .dock-in{position:relative;max-width:520px;margin:0 auto;display:grid;gap:8px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0 8px;border:0;background:transparent;color:var(--muted);font:600 12px var(--font-body)}
 .tab .pill{width:64px;height:32px;border-radius:999px;display:grid;place-items:center}
-.tab[aria-selected="true"]{color:var(--brand)}
-.tab[aria-selected="true"] .pill{background:var(--brand-soft)}
-.toast{position:absolute;left:0;right:0;bottom:calc(100% + 12px);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:600;font-size:14px}
+.tab[aria-selected="true"]{color:var(--mint)}
+.tab[aria-selected="true"] .pill{background:var(--teal-soft);box-shadow:inset 0 0 0 1.5px var(--teal)}
+.toast{position:absolute;left:0;right:0;bottom:calc(100% + 12px);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;background:var(--toast-bg);color:var(--toast-fg);font-weight:600;font-size:14px;box-shadow:0 10px 30px rgba(6,3,24,.4)}
 .toast[hidden]{display:none}
-.toast button{border:0;background:transparent;color:inherit;text-decoration:underline;font:700 14px var(--font-body);padding:8px 4px;white-space:nowrap}
+.toast button{border:0;background:transparent;color:var(--toast-link);text-decoration:underline;font:700 14px var(--font-body);padding:8px 4px;white-space:nowrap}
 
 /* demonstrativo */
-.paper{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:12px}
-.paper-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px;background:var(--brand);color:var(--on-brand)}
-.paper-h .eyebrow{color:inherit;opacity:.85}
-.paper-h h2{margin:0;font:800 32px/1.05 var(--font-display);letter-spacing:-.01em}
-.mark{width:44px;height:44px;border-radius:12px;background:var(--mark-bg);display:grid;place-items:center;flex:none}
+.paper{background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:22px;overflow:hidden;margin-top:12px;box-shadow:0 10px 30px rgba(6,3,24,.28)}
+.paper-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px;background:linear-gradient(120deg,#1F6F8F 0%,#5A3A8E 52%,#B01C5A 100%);color:#FFFFFF}
+.paper-h .eyebrow{color:#E6FAF8}
+.paper-h h2{margin:0;font:800 32px/1.05 var(--font-display);letter-spacing:-.02em}
+.mark{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex:none}
 .paper-b{padding:18px;display:grid;gap:16px}
 .sep-top{padding-top:16px;border-top:1px dashed var(--line-strong)}
 .meta{margin:0;display:grid;gap:8px}
 .meta div{display:flex;justify-content:space-between;gap:16px;align-items:baseline}
 .meta dt{color:var(--muted);font-size:14px}
 .meta dd{margin:0;font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
-.total{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;background:var(--brand-soft);border-radius:14px;padding:14px}
-.total span{font:700 11px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.total{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;background:linear-gradient(135deg,rgba(95,216,210,.22),rgba(242,63,112,.26));border:1px solid var(--line);border-radius:16px;padding:14px}
+.total span{font:700 11px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mint)}
 .total strong{font:600 34px/1 var(--font-mono);letter-spacing:-.02em}
 .lines{list-style:none;margin:0;padding-left:0;display:grid;gap:2px}
 .lines li{display:flex;align-items:baseline;gap:8px;padding:6px 0}
@@ -180,7 +177,7 @@ input.input:focus{outline:none;border-color:var(--brand);background:var(--surfac
 .lines .v{font:500 14px var(--font-mono)}
 .lines .strong .k{color:var(--ink);font-weight:700}
 .lines .strong .v{font-weight:600}
-.cmp{margin:0;display:flex;gap:8px;align-items:center;padding:10px 12px;border-radius:12px;font-weight:600;font-size:13px}
+.cmp{margin:0;display:flex;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;font-weight:600;font-size:13px}
 .cmp .ic{width:16px;height:16px}
 .cmp.up{background:var(--warn-soft);color:var(--warn)}
 .cmp.down{background:var(--good-soft);color:var(--good)}
@@ -188,31 +185,20 @@ input.input:focus{outline:none;border-color:var(--brand);background:var(--surfac
 .chart-t{margin:0 0 8px;font:700 11px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .chart-svg{width:100%;height:auto;display:block}
 .axis{stroke:var(--line-strong);stroke-width:1}
-.bar{fill:var(--bar)}
-.bar.sel{fill:var(--brand)}
+.bar{fill:rgba(255,255,255,.3)}
+.bar.sel{fill:var(--teal)}
 .lbl,.val{font:500 9.5px var(--font-mono);fill:var(--muted)}
 .lbl.sel,.val.sel{fill:var(--ink);font-weight:600}
-.pix{display:grid;gap:4px;background:var(--field);border-radius:12px;padding:12px}
-.pix span{font:700 11px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.pix b{font:500 15px var(--font-mono);overflow-wrap:anywhere;user-select:all;-webkit-user-select:all}
 .paper-f{margin:0;color:var(--muted);font-size:12px;text-align:center}
 .paper-f.sep-top{padding-top:14px}
 .actions{display:grid;gap:10px;margin-top:14px}
 .actions .hint{margin:0;text-align:center}
-details.msg{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:0 14px}
-details.msg summary{min-height:48px;display:flex;align-items:center;font-weight:600;font-size:14px;cursor:pointer}
-details.msg textarea{width:100%;height:210px;resize:none;margin:0 0 14px;padding:12px;border-radius:12px;border:1.5px solid transparent;background:var(--field);font:400 13px/1.5 var(--font-mono);color:var(--ink)}
 .empty{justify-items:center;text-align:center;margin-top:12px;padding:28px 16px}
 .empty p{margin:0}
-.dial.dim{justify-content:center}
 
 /* cobrança PIX */
 .sec+.paper,.sec+.cobr,.sec+.nopix{margin-top:0}
-.cobr{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 18px;display:grid;gap:16px}
-.qrwrap{width:min(220px,62%)}
-.qr{width:100%;height:auto;display:block;border-radius:10px}
-.qr .bg{fill:var(--qr-bg)}
-.qr .fg{fill:var(--qr-fg)}
+.cobr{background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:22px;padding:20px 18px;display:grid;gap:16px;box-shadow:0 10px 30px rgba(6,3,24,.28)}
 .cobr-t{margin:0;font:300 28px/1.2 var(--font-body);text-wrap:balance}
 .cobr-t b{font:800 28px/1.2 var(--font-display)}
 .cobr-g{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.9fr);gap:14px 12px;align-items:start}
@@ -220,19 +206,47 @@ details.msg textarea{width:100%;height:210px;resize:none;margin:0 0 14px;padding
 .cobr .k{display:block;color:var(--muted);font-size:13px}
 .cobr .big{display:block;font:300 clamp(24px,7.4vw,32px)/1.15 var(--font-body);font-variant-numeric:tabular-nums;white-space:nowrap}
 .cobr-g b{display:block;font-weight:700;margin-bottom:8px}
-.rule{border:0;border-top:2px solid var(--ink);margin:0}
+.rule{border:0;height:4px;border-radius:2px;margin:0;background:linear-gradient(90deg,var(--teal),var(--hot-b))}
 .ins-t{margin:0;font-weight:700}
-.ins{margin:0;padding-left:20px;display:grid;gap:4px;font-size:14px}
-.code{display:grid;gap:6px;background:var(--field);border-radius:12px;padding:12px}
+.ins{margin:0;padding-left:34px;display:grid;gap:4px;font-size:14px;border-left:3px solid var(--teal)}
+.code{display:grid;gap:6px;background:var(--field);border-radius:14px;padding:12px}
 .code b{font:500 12px/1.5 var(--font-mono);overflow-wrap:anywhere;user-select:all;-webkit-user-select:all}
 .nopix{gap:10px}
 .nopix p{margin:0}
 
+/* controle geral */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;gap:4px;min-width:0;align-content:start}
+.kpi.main{background:linear-gradient(135deg,rgba(95,216,210,.24),rgba(242,63,112,.3))}
+.kpi .k{font:700 10.5px/1.25 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font:600 22px/1.1 var(--font-mono);letter-spacing:-.02em;overflow-wrap:anywhere}
+.kpi .s{font-size:12px;color:var(--muted)}
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font:700 10.5px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 6px 8px}
+.tbl td{padding:10px 6px;border-top:1px solid var(--line);vertical-align:middle}
+.tbl .r{text-align:right;font-family:var(--font-mono);white-space:nowrap}
+.tbl tfoot td{font-weight:700;border-top:1px solid var(--line-strong)}
+.tbl .sub{display:block;font-size:12px;color:var(--muted)}
+.lnk{border:0;background:transparent;padding:0;color:var(--mint);font:700 14px var(--font-body);text-decoration:underline;text-underline-offset:3px;text-align:left}
+.tag{display:inline-block;padding:3px 9px;border-radius:999px;font:700 10.5px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.tag.ok{background:var(--good-soft);color:var(--good)}
+.tag.pend{background:var(--warn-soft);color:var(--warn)}
+.delta{font-size:12px;color:var(--muted);white-space:nowrap}
+
+/* tela de pagamento (link enviado ao morador) */
+body[data-mode="pay"] .app,body[data-mode="pay"] .dock,body[data-mode="pay"] .sheet,body[data-mode="pay"] .bgfx{display:none}
+body[data-mode="pay"]{background:linear-gradient(165deg,#2C6E9C 0%,#5A3A89 28%,#8E1F66 58%,#2B0F42 82%,#0D0A28 100%) fixed}
+#pay{position:relative;z-index:1;max-width:520px;margin:0 auto;padding-block:24px 40px;display:grid;gap:16px}
+#pay[hidden]{display:none}
+.pay-t{margin:0;font:300 32px/1.15 var(--font-body);text-wrap:balance}
+.pay-t b{font:800 32px/1.15 var(--font-display)}
+
 /* ajustes */
 .sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center}
 .sheet[hidden]{display:none}
-.sheet-bg{position:absolute;inset:0;background:rgba(5,12,22,.55)}
-.sheet-p{position:relative;width:100%;max-width:520px;max-height:88%;overflow:auto;background:var(--surface);border-radius:22px 22px 0 0;
+.sheet-bg{position:absolute;inset:0;background:rgba(5,2,20,.62)}
+.sheet-p{position:relative;width:100%;max-width:520px;max-height:88%;overflow:auto;background:linear-gradient(170deg,#1B1544 0%,#2A1450 65%,#3E1450 100%);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;
   padding:18px max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:14px}
 .sheet-p header{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .sheet-p h2{margin:0;font:800 22px var(--font-display)}
@@ -246,6 +260,8 @@ details.msg textarea{width:100%;height:210px;resize:none;margin:0 0 14px;padding
 
 </head>
 <body>
+<div class="bgfx" aria-hidden="true"></div>
+
 <div class="app">
   <header class="top">
     <div class="titles">
@@ -306,6 +322,7 @@ details.msg textarea{width:100%;height:210px;resize:none;margin:0 0 14px;padding
       </div>
     </section>
 
+    <section id="screen-ctrl" hidden aria-label="Controle geral"></section>
     <section id="screen-demo" hidden aria-label="Demonstrativo do mês"></section>
   </main>
 </div>
@@ -318,6 +335,7 @@ details.msg textarea{width:100%;height:210px;resize:none;margin:0 0 14px;padding
     </div>
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-leitura" data-tab="leitura" aria-selected="true" type="button"><span class="pill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></span>Leitura</button>
+      <button class="tab" role="tab" id="tab-ctrl" data-tab="ctrl" aria-selected="false" type="button"><span class="pill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V11M12 21V4M19 21v-7"/></svg></span>Controle</button>
       <button class="tab" role="tab" id="tab-demo" data-tab="demo" aria-selected="false" type="button"><span class="pill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2zM9 8h6M9 12h6"/></svg></span>Enviar</button>
     </div>
   </div>
@@ -341,1272 +359,28 @@ details.msg textarea{width:100%;height:210px;resize:none;margin:0 0 14px;padding
     <div class="field"><label class="lab" for="s-rec">Nome de quem recebe</label><input class="input" id="s-rec" type="text" autocomplete="off" placeholder="Ex.: Jean Pierre"></div>
     <div class="field"><label class="lab" for="s-pix">Sua chave PIX</label><input class="input num" id="s-pix" type="text" autocomplete="off" placeholder="CPF, e-mail, celular ou chave aleatória"></div>
     <div class="field"><label class="lab" for="s-cid">Cidade (aparece no PIX)</label><input class="input" id="s-cid" type="text" autocomplete="off" placeholder="Ex.: Florianópolis"></div>
-    <p class="hint">Para celular, digite com +55 e DDD (ex.: +5548999990000). Com a chave cadastrada, o app gera o QR Code e o código copia e cola já com o valor do mês.</p>
+    <p class="hint">Para celular, digite com +55 e DDD (ex.: +5548999990000). Com a chave cadastrada, o app gera o link de pagamento PIX já com o valor do mês.</p>
     <p class="sync" id="sync"></p>
     <button class="btn primary block" type="button" data-close>Concluir</button>
   </section>
 </div>
 
-<script>
-/* QRCode for JavaScript - Copyright (c) 2009 Kazuhiko Arase - MIT license (d-project.com). Adaptado para navegador. */
-var QRLib=(function(){var M={},C={};function req(p){var n=p.replace(/^\.\//,"");if(C[n])return C[n].exports;var m=C[n]={exports:{}};M[n](m,m.exports,req);return m.exports}
-M["QRMode"]=function(module,exports,require){
-module.exports = {
-    MODE_NUMBER :       1 << 0,
-    MODE_ALPHA_NUM :    1 << 1,
-    MODE_8BIT_BYTE :    1 << 2,
-    MODE_KANJI :        1 << 3
-};
-
-};
-M["QRMaskPattern"]=function(module,exports,require){
-module.exports = {
-	PATTERN000 : 0,
-	PATTERN001 : 1,
-	PATTERN010 : 2,
-	PATTERN011 : 3,
-	PATTERN100 : 4,
-	PATTERN101 : 5,
-	PATTERN110 : 6,
-	PATTERN111 : 7
-};
-
-};
-M["QRErrorCorrectLevel"]=function(module,exports,require){
-module.exports = {
-	L : 1,
-	M : 0,
-	Q : 3,
-	H : 2
-};
-
-
-};
-M["QRMath"]=function(module,exports,require){
-var QRMath = {
-
-	glog : function(n) {
-	
-		if (n < 1) {
-			throw new Error("glog(" + n + ")");
-		}
-		
-		return QRMath.LOG_TABLE[n];
-	},
-	
-	gexp : function(n) {
-	
-		while (n < 0) {
-			n += 255;
-		}
-	
-		while (n >= 256) {
-			n -= 255;
-		}
-	
-		return QRMath.EXP_TABLE[n];
-	},
-	
-	EXP_TABLE : new Array(256),
-	
-	LOG_TABLE : new Array(256)
-
-};
-	
-for (var i = 0; i < 8; i++) {
-	QRMath.EXP_TABLE[i] = 1 << i;
-}
-for (var i = 8; i < 256; i++) {
-	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
-		^ QRMath.EXP_TABLE[i - 5]
-		^ QRMath.EXP_TABLE[i - 6]
-		^ QRMath.EXP_TABLE[i - 8];
-}
-for (var i = 0; i < 255; i++) {
-	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
-}
-
-module.exports = QRMath;
-
-};
-M["QRPolynomial"]=function(module,exports,require){
-var QRMath = require('./QRMath');
-
-function QRPolynomial(num, shift) {
-	if (num.length === undefined) {
-		throw new Error(num.length + "/" + shift);
-	}
-
-	var offset = 0;
-
-	while (offset < num.length && num[offset] === 0) {
-		offset++;
-	}
-
-	this.num = new Array(num.length - offset + shift);
-	for (var i = 0; i < num.length - offset; i++) {
-		this.num[i] = num[i + offset];
-	}
-}
-
-QRPolynomial.prototype = {
-
-	get : function(index) {
-		return this.num[index];
-	},
-	
-	getLength : function() {
-		return this.num.length;
-	},
-	
-	multiply : function(e) {
-	
-		var num = new Array(this.getLength() + e.getLength() - 1);
-	
-		for (var i = 0; i < this.getLength(); i++) {
-			for (var j = 0; j < e.getLength(); j++) {
-				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
-			}
-		}
-	
-		return new QRPolynomial(num, 0);
-	},
-	
-	mod : function(e) {
-	
-		if (this.getLength() - e.getLength() < 0) {
-			return this;
-		}
-	
-		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
-	
-		var num = new Array(this.getLength() );
-		
-		for (var i = 0; i < this.getLength(); i++) {
-			num[i] = this.get(i);
-		}
-		
-		for (var x = 0; x < e.getLength(); x++) {
-			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
-		}
-	
-		// recursive call
-		return new QRPolynomial(num, 0).mod(e);
-	}
-};
-
-module.exports = QRPolynomial;
-
-};
-M["QRUtil"]=function(module,exports,require){
-var QRMode = require('./QRMode');
-var QRPolynomial = require('./QRPolynomial');
-var QRMath = require('./QRMath');
-var QRMaskPattern = require('./QRMaskPattern');
-
-var QRUtil = {
-
-    PATTERN_POSITION_TABLE : [
-        [],
-        [6, 18],
-        [6, 22],
-        [6, 26],
-        [6, 30],
-        [6, 34],
-        [6, 22, 38],
-        [6, 24, 42],
-        [6, 26, 46],
-        [6, 28, 50],
-        [6, 30, 54],        
-        [6, 32, 58],
-        [6, 34, 62],
-        [6, 26, 46, 66],
-        [6, 26, 48, 70],
-        [6, 26, 50, 74],
-        [6, 30, 54, 78],
-        [6, 30, 56, 82],
-        [6, 30, 58, 86],
-        [6, 34, 62, 90],
-        [6, 28, 50, 72, 94],
-        [6, 26, 50, 74, 98],
-        [6, 30, 54, 78, 102],
-        [6, 28, 54, 80, 106],
-        [6, 32, 58, 84, 110],
-        [6, 30, 58, 86, 114],
-        [6, 34, 62, 90, 118],
-        [6, 26, 50, 74, 98, 122],
-        [6, 30, 54, 78, 102, 126],
-        [6, 26, 52, 78, 104, 130],
-        [6, 30, 56, 82, 108, 134],
-        [6, 34, 60, 86, 112, 138],
-        [6, 30, 58, 86, 114, 142],
-        [6, 34, 62, 90, 118, 146],
-        [6, 30, 54, 78, 102, 126, 150],
-        [6, 24, 50, 76, 102, 128, 154],
-        [6, 28, 54, 80, 106, 132, 158],
-        [6, 32, 58, 84, 110, 136, 162],
-        [6, 26, 54, 82, 110, 138, 166],
-        [6, 30, 58, 86, 114, 142, 170]
-    ],
-
-    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
-    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
-    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
-
-    getBCHTypeInfo : function(data) {
-        var d = data << 10;
-        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
-            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
-        }
-        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
-    },
-
-    getBCHTypeNumber : function(data) {
-        var d = data << 12;
-        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
-            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
-        }
-        return (data << 12) | d;
-    },
-
-    getBCHDigit : function(data) {
-
-        var digit = 0;
-
-        while (data !== 0) {
-            digit++;
-            data >>>= 1;
-        }
-
-        return digit;
-    },
-
-    getPatternPosition : function(typeNumber) {
-        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
-    },
-
-    getMask : function(maskPattern, i, j) {
-        
-        switch (maskPattern) {
-            
-        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
-        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
-        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
-        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
-        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
-        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
-        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
-        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
-
-        default :
-            throw new Error("bad maskPattern:" + maskPattern);
-        }
-    },
-
-    getErrorCorrectPolynomial : function(errorCorrectLength) {
-
-        var a = new QRPolynomial([1], 0);
-
-        for (var i = 0; i < errorCorrectLength; i++) {
-            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
-        }
-
-        return a;
-    },
-
-    getLengthInBits : function(mode, type) {
-
-        if (1 <= type && type < 10) {
-
-            // 1 - 9
-
-            switch(mode) {
-            case QRMode.MODE_NUMBER     : return 10;
-            case QRMode.MODE_ALPHA_NUM  : return 9;
-            case QRMode.MODE_8BIT_BYTE  : return 8;
-            case QRMode.MODE_KANJI      : return 8;
-            default :
-                throw new Error("mode:" + mode);
-            }
-
-        } else if (type < 27) {
-
-            // 10 - 26
-
-            switch(mode) {
-            case QRMode.MODE_NUMBER     : return 12;
-            case QRMode.MODE_ALPHA_NUM  : return 11;
-            case QRMode.MODE_8BIT_BYTE  : return 16;
-            case QRMode.MODE_KANJI      : return 10;
-            default :
-                throw new Error("mode:" + mode);
-            }
-
-        } else if (type < 41) {
-
-            // 27 - 40
-
-            switch(mode) {
-            case QRMode.MODE_NUMBER     : return 14;
-            case QRMode.MODE_ALPHA_NUM  : return 13;
-            case QRMode.MODE_8BIT_BYTE  : return 16;
-            case QRMode.MODE_KANJI      : return 12;
-            default :
-                throw new Error("mode:" + mode);
-            }
-
-        } else {
-            throw new Error("type:" + type);
-        }
-    },
-
-    getLostPoint : function(qrCode) {
-        
-        var moduleCount = qrCode.getModuleCount();
-        var lostPoint = 0;
-        var row = 0; 
-        var col = 0;
-
-        
-        // LEVEL1
-        
-        for (row = 0; row < moduleCount; row++) {
-
-            for (col = 0; col < moduleCount; col++) {
-
-                var sameCount = 0;
-                var dark = qrCode.isDark(row, col);
-
-                for (var r = -1; r <= 1; r++) {
-
-                    if (row + r < 0 || moduleCount <= row + r) {
-                        continue;
-                    }
-
-                    for (var c = -1; c <= 1; c++) {
-
-                        if (col + c < 0 || moduleCount <= col + c) {
-                            continue;
-                        }
-
-                        if (r === 0 && c === 0) {
-                            continue;
-                        }
-
-                        if (dark === qrCode.isDark(row + r, col + c) ) {
-                            sameCount++;
-                        }
-                    }
-                }
-
-                if (sameCount > 5) {
-                    lostPoint += (3 + sameCount - 5);
-                }
-            }
-        }
-
-        // LEVEL2
-
-        for (row = 0; row < moduleCount - 1; row++) {
-            for (col = 0; col < moduleCount - 1; col++) {
-                var count = 0;
-                if (qrCode.isDark(row,     col    ) ) count++;
-                if (qrCode.isDark(row + 1, col    ) ) count++;
-                if (qrCode.isDark(row,     col + 1) ) count++;
-                if (qrCode.isDark(row + 1, col + 1) ) count++;
-                if (count === 0 || count === 4) {
-                    lostPoint += 3;
-                }
-            }
-        }
-
-        // LEVEL3
-
-        for (row = 0; row < moduleCount; row++) {
-            for (col = 0; col < moduleCount - 6; col++) {
-                if (qrCode.isDark(row, col) && 
-                        !qrCode.isDark(row, col + 1) && 
-                         qrCode.isDark(row, col + 2) && 
-                         qrCode.isDark(row, col + 3) && 
-                         qrCode.isDark(row, col + 4) && 
-                        !qrCode.isDark(row, col + 5) && 
-                         qrCode.isDark(row, col + 6) ) {
-                    lostPoint += 40;
-                }
-            }
-        }
-
-        for (col = 0; col < moduleCount; col++) {
-            for (row = 0; row < moduleCount - 6; row++) {
-                if (qrCode.isDark(row, col) &&
-                        !qrCode.isDark(row + 1, col) &&
-                         qrCode.isDark(row + 2, col) &&
-                         qrCode.isDark(row + 3, col) &&
-                         qrCode.isDark(row + 4, col) &&
-                        !qrCode.isDark(row + 5, col) &&
-                         qrCode.isDark(row + 6, col) ) {
-                    lostPoint += 40;
-                }
-            }
-        }
-
-        // LEVEL4
-        
-        var darkCount = 0;
-
-        for (col = 0; col < moduleCount; col++) {
-            for (row = 0; row < moduleCount; row++) {
-                if (qrCode.isDark(row, col) ) {
-                    darkCount++;
-                }
-            }
-        }
-        
-        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
-        lostPoint += ratio * 10;
-
-        return lostPoint;       
-    }
-
-};
-
-module.exports = QRUtil;
-
-};
-M["QRRSBlock"]=function(module,exports,require){
-var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
-
-function QRRSBlock(totalCount, dataCount) {
-	this.totalCount = totalCount;
-	this.dataCount  = dataCount;
-}
-
-QRRSBlock.RS_BLOCK_TABLE = [
-
-	// L
-	// M
-	// Q
-	// H
-
-	// 1
-	[1, 26, 19],
-	[1, 26, 16],
-	[1, 26, 13],
-	[1, 26, 9],
-	
-	// 2
-	[1, 44, 34],
-	[1, 44, 28],
-	[1, 44, 22],
-	[1, 44, 16],
-
-	// 3
-	[1, 70, 55],
-	[1, 70, 44],
-	[2, 35, 17],
-	[2, 35, 13],
-
-	// 4		
-	[1, 100, 80],
-	[2, 50, 32],
-	[2, 50, 24],
-	[4, 25, 9],
-	
-	// 5
-	[1, 134, 108],
-	[2, 67, 43],
-	[2, 33, 15, 2, 34, 16],
-	[2, 33, 11, 2, 34, 12],
-	
-	// 6
-	[2, 86, 68],
-	[4, 43, 27],
-	[4, 43, 19],
-	[4, 43, 15],
-	
-	// 7		
-	[2, 98, 78],
-	[4, 49, 31],
-	[2, 32, 14, 4, 33, 15],
-	[4, 39, 13, 1, 40, 14],
-	
-	// 8
-	[2, 121, 97],
-	[2, 60, 38, 2, 61, 39],
-	[4, 40, 18, 2, 41, 19],
-	[4, 40, 14, 2, 41, 15],
-	
-	// 9
-	[2, 146, 116],
-	[3, 58, 36, 2, 59, 37],
-	[4, 36, 16, 4, 37, 17],
-	[4, 36, 12, 4, 37, 13],
-	
-	// 10		
-	[2, 86, 68, 2, 87, 69],
-	[4, 69, 43, 1, 70, 44],
-	[6, 43, 19, 2, 44, 20],
-	[6, 43, 15, 2, 44, 16],
-
-	// 11
-	[4, 101, 81],
-	[1, 80, 50, 4, 81, 51],
-	[4, 50, 22, 4, 51, 23],
-	[3, 36, 12, 8, 37, 13],
-
-	// 12
-	[2, 116, 92, 2, 117, 93],
-	[6, 58, 36, 2, 59, 37],
-	[4, 46, 20, 6, 47, 21],
-	[7, 42, 14, 4, 43, 15],
-
-	// 13
-	[4, 133, 107],
-	[8, 59, 37, 1, 60, 38],
-	[8, 44, 20, 4, 45, 21],
-	[12, 33, 11, 4, 34, 12],
-
-	// 14
-	[3, 145, 115, 1, 146, 116],
-	[4, 64, 40, 5, 65, 41],
-	[11, 36, 16, 5, 37, 17],
-	[11, 36, 12, 5, 37, 13],
-
-	// 15
-	[5, 109, 87, 1, 110, 88],
-	[5, 65, 41, 5, 66, 42],
-	[5, 54, 24, 7, 55, 25],
-	[11, 36, 12],
-
-	// 16
-	[5, 122, 98, 1, 123, 99],
-	[7, 73, 45, 3, 74, 46],
-	[15, 43, 19, 2, 44, 20],
-	[3, 45, 15, 13, 46, 16],
-
-	// 17
-	[1, 135, 107, 5, 136, 108],
-	[10, 74, 46, 1, 75, 47],
-	[1, 50, 22, 15, 51, 23],
-	[2, 42, 14, 17, 43, 15],
-
-	// 18
-	[5, 150, 120, 1, 151, 121],
-	[9, 69, 43, 4, 70, 44],
-	[17, 50, 22, 1, 51, 23],
-	[2, 42, 14, 19, 43, 15],
-
-	// 19
-	[3, 141, 113, 4, 142, 114],
-	[3, 70, 44, 11, 71, 45],
-	[17, 47, 21, 4, 48, 22],
-	[9, 39, 13, 16, 40, 14],
-
-	// 20
-	[3, 135, 107, 5, 136, 108],
-	[3, 67, 41, 13, 68, 42],
-	[15, 54, 24, 5, 55, 25],
-	[15, 43, 15, 10, 44, 16],
-
-	// 21
-	[4, 144, 116, 4, 145, 117],
-	[17, 68, 42],
-	[17, 50, 22, 6, 51, 23],
-	[19, 46, 16, 6, 47, 17],
-
-	// 22
-	[2, 139, 111, 7, 140, 112],
-	[17, 74, 46],
-	[7, 54, 24, 16, 55, 25],
-	[34, 37, 13],
-
-	// 23
-	[4, 151, 121, 5, 152, 122],
-	[4, 75, 47, 14, 76, 48],
-	[11, 54, 24, 14, 55, 25],
-	[16, 45, 15, 14, 46, 16],
-
-	// 24
-	[6, 147, 117, 4, 148, 118],
-	[6, 73, 45, 14, 74, 46],
-	[11, 54, 24, 16, 55, 25],
-	[30, 46, 16, 2, 47, 17],
-
-	// 25
-	[8, 132, 106, 4, 133, 107],
-	[8, 75, 47, 13, 76, 48],
-	[7, 54, 24, 22, 55, 25],
-	[22, 45, 15, 13, 46, 16],
-
-	// 26
-	[10, 142, 114, 2, 143, 115],
-	[19, 74, 46, 4, 75, 47],
-	[28, 50, 22, 6, 51, 23],
-	[33, 46, 16, 4, 47, 17],
-
-	// 27
-	[8, 152, 122, 4, 153, 123],
-	[22, 73, 45, 3, 74, 46],
-	[8, 53, 23, 26, 54, 24],
-	[12, 45, 15, 28, 46, 16],
-
-	// 28
-	[3, 147, 117, 10, 148, 118],
-	[3, 73, 45, 23, 74, 46],
-	[4, 54, 24, 31, 55, 25],
-	[11, 45, 15, 31, 46, 16],
-
-	// 29
-	[7, 146, 116, 7, 147, 117],
-	[21, 73, 45, 7, 74, 46],
-	[1, 53, 23, 37, 54, 24],
-	[19, 45, 15, 26, 46, 16],
-
-	// 30
-	[5, 145, 115, 10, 146, 116],
-	[19, 75, 47, 10, 76, 48],
-	[15, 54, 24, 25, 55, 25],
-	[23, 45, 15, 25, 46, 16],
-
-	// 31
-	[13, 145, 115, 3, 146, 116],
-	[2, 74, 46, 29, 75, 47],
-	[42, 54, 24, 1, 55, 25],
-	[23, 45, 15, 28, 46, 16],
-
-	// 32
-	[17, 145, 115],
-	[10, 74, 46, 23, 75, 47],
-	[10, 54, 24, 35, 55, 25],
-	[19, 45, 15, 35, 46, 16],
-
-	// 33
-	[17, 145, 115, 1, 146, 116],
-	[14, 74, 46, 21, 75, 47],
-	[29, 54, 24, 19, 55, 25],
-	[11, 45, 15, 46, 46, 16],
-
-	// 34
-	[13, 145, 115, 6, 146, 116],
-	[14, 74, 46, 23, 75, 47],
-	[44, 54, 24, 7, 55, 25],
-	[59, 46, 16, 1, 47, 17],
-
-	// 35
-	[12, 151, 121, 7, 152, 122],
-	[12, 75, 47, 26, 76, 48],
-	[39, 54, 24, 14, 55, 25],
-	[22, 45, 15, 41, 46, 16],
-
-	// 36
-	[6, 151, 121, 14, 152, 122],
-	[6, 75, 47, 34, 76, 48],
-	[46, 54, 24, 10, 55, 25],
-	[2, 45, 15, 64, 46, 16],
-
-	// 37
-	[17, 152, 122, 4, 153, 123],
-	[29, 74, 46, 14, 75, 47],
-	[49, 54, 24, 10, 55, 25],
-	[24, 45, 15, 46, 46, 16],
-
-	// 38
-	[4, 152, 122, 18, 153, 123],
-	[13, 74, 46, 32, 75, 47],
-	[48, 54, 24, 14, 55, 25],
-	[42, 45, 15, 32, 46, 16],
-
-	// 39
-	[20, 147, 117, 4, 148, 118],
-	[40, 75, 47, 7, 76, 48],
-	[43, 54, 24, 22, 55, 25],
-	[10, 45, 15, 67, 46, 16],
-
-	// 40
-	[19, 148, 118, 6, 149, 119],
-	[18, 75, 47, 31, 76, 48],
-	[34, 54, 24, 34, 55, 25],
-	[20, 45, 15, 61, 46, 16]
-];
-
-QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
-	
-	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
-	
-	if (rsBlock === undefined) {
-		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
-	}
-
-	var length = rsBlock.length / 3;
-	
-	var list = [];
-	
-	for (var i = 0; i < length; i++) {
-
-		var count = rsBlock[i * 3 + 0];
-		var totalCount = rsBlock[i * 3 + 1];
-		var dataCount  = rsBlock[i * 3 + 2];
-
-		for (var j = 0; j < count; j++) {
-			list.push(new QRRSBlock(totalCount, dataCount) );	
-		}
-	}
-	
-	return list;
-};
-
-QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
-
-	switch(errorCorrectLevel) {
-	case QRErrorCorrectLevel.L :
-		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-	case QRErrorCorrectLevel.M :
-		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-	case QRErrorCorrectLevel.Q :
-		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-	case QRErrorCorrectLevel.H :
-		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
-	default :
-		return undefined;
-	}
-};
-
-module.exports = QRRSBlock;
-
-};
-M["QRBitBuffer"]=function(module,exports,require){
-function QRBitBuffer() {
-	this.buffer = [];
-	this.length = 0;
-}
-
-QRBitBuffer.prototype = {
-
-	get : function(index) {
-		var bufIndex = Math.floor(index / 8);
-		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
-	},
-	
-	put : function(num, length) {
-		for (var i = 0; i < length; i++) {
-			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
-		}
-	},
-	
-	getLengthInBits : function() {
-		return this.length;
-	},
-	
-	putBit : function(bit) {
-	
-		var bufIndex = Math.floor(this.length / 8);
-		if (this.buffer.length <= bufIndex) {
-			this.buffer.push(0);
-		}
-	
-		if (bit) {
-			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
-		}
-	
-		this.length++;
-	}
-};
-
-module.exports = QRBitBuffer;
-
-};
-M["QR8bitByte"]=function(module,exports,require){
-var QRMode = require('./QRMode');
-
-function QR8bitByte(data) {
-	this.mode = QRMode.MODE_8BIT_BYTE;
-	this.data = data;
-}
-
-QR8bitByte.prototype = {
-
-	getLength : function() {
-		return this.data.length;
-	},
-	
-	write : function(buffer) {
-		for (var i = 0; i < this.data.length; i++) {
-			// not JIS ...
-			buffer.put(this.data.charCodeAt(i), 8);
-		}
-	}
-};
-
-module.exports = QR8bitByte;
-
-};
-M["index"]=function(module,exports,require){
-//---------------------------------------------------------------------
-// QRCode for JavaScript
-//
-// Copyright (c) 2009 Kazuhiko Arase
-//
-// URL: http://www.d-project.com/
-//
-// Licensed under the MIT license:
-//   http://www.opensource.org/licenses/mit-license.php
-//
-// The word "QR Code" is registered trademark of 
-// DENSO WAVE INCORPORATED
-//   http://www.denso-wave.com/qrcode/faqpatent-e.html
-//
-//---------------------------------------------------------------------
-// Modified to work in node for this project (and some refactoring)
-//---------------------------------------------------------------------
-
-var QR8bitByte = require('./QR8bitByte');
-var QRUtil = require('./QRUtil');
-var QRPolynomial = require('./QRPolynomial');
-var QRRSBlock = require('./QRRSBlock');
-var QRBitBuffer = require('./QRBitBuffer');
-
-function QRCode(typeNumber, errorCorrectLevel) {
-	this.typeNumber = typeNumber;
-	this.errorCorrectLevel = errorCorrectLevel;
-	this.modules = null;
-	this.moduleCount = 0;
-	this.dataCache = null;
-	this.dataList = [];
-}
-
-QRCode.prototype = {
-	
-	addData : function(data) {
-		var newData = new QR8bitByte(data);
-		this.dataList.push(newData);
-		this.dataCache = null;
-	},
-	
-	isDark : function(row, col) {
-		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
-			throw new Error(row + "," + col);
-		}
-		return this.modules[row][col];
-	},
-
-	getModuleCount : function() {
-		return this.moduleCount;
-	},
-	
-	make : function() {
-		// Calculate automatically typeNumber if provided is < 1
-		if (this.typeNumber < 1 ){
-			var typeNumber = 1;
-			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
-				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
-
-				var buffer = new QRBitBuffer();
-				var totalDataCount = 0;
-				for (var i = 0; i < rsBlocks.length; i++) {
-					totalDataCount += rsBlocks[i].dataCount;
-				}
-
-				for (var x = 0; x < this.dataList.length; x++) {
-					var data = this.dataList[x];
-					buffer.put(data.mode, 4);
-					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
-					data.write(buffer);
-				}
-				if (buffer.getLengthInBits() <= totalDataCount * 8)
-					break;
-			}
-			this.typeNumber = typeNumber;
-		}
-		this.makeImpl(false, this.getBestMaskPattern() );
-	},
-	
-	makeImpl : function(test, maskPattern) {
-		
-		this.moduleCount = this.typeNumber * 4 + 17;
-		this.modules = new Array(this.moduleCount);
-		
-		for (var row = 0; row < this.moduleCount; row++) {
-			
-			this.modules[row] = new Array(this.moduleCount);
-			
-			for (var col = 0; col < this.moduleCount; col++) {
-				this.modules[row][col] = null;//(col + row) % 3;
-			}
-		}
-	
-		this.setupPositionProbePattern(0, 0);
-		this.setupPositionProbePattern(this.moduleCount - 7, 0);
-		this.setupPositionProbePattern(0, this.moduleCount - 7);
-		this.setupPositionAdjustPattern();
-		this.setupTimingPattern();
-		this.setupTypeInfo(test, maskPattern);
-		
-		if (this.typeNumber >= 7) {
-			this.setupTypeNumber(test);
-		}
-	
-		if (this.dataCache === null) {
-			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
-		}
-	
-		this.mapData(this.dataCache, maskPattern);
-	},
-
-	setupPositionProbePattern : function(row, col)  {
-		
-		for (var r = -1; r <= 7; r++) {
-			
-			if (row + r <= -1 || this.moduleCount <= row + r) continue;
-			
-			for (var c = -1; c <= 7; c++) {
-				
-				if (col + c <= -1 || this.moduleCount <= col + c) continue;
-				
-				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
-                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
-                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
-					this.modules[row + r][col + c] = true;
-				} else {
-					this.modules[row + r][col + c] = false;
-				}
-			}		
-		}		
-	},
-	
-	getBestMaskPattern : function() {
-	
-		var minLostPoint = 0;
-		var pattern = 0;
-	
-		for (var i = 0; i < 8; i++) {
-			
-			this.makeImpl(true, i);
-	
-			var lostPoint = QRUtil.getLostPoint(this);
-	
-			if (i === 0 || minLostPoint >  lostPoint) {
-				minLostPoint = lostPoint;
-				pattern = i;
-			}
-		}
-	
-		return pattern;
-	},
-	
-	createMovieClip : function(target_mc, instance_name, depth) {
-	
-		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
-		var cs = 1;
-	
-		this.make();
-
-		for (var row = 0; row < this.modules.length; row++) {
-			
-			var y = row * cs;
-			
-			for (var col = 0; col < this.modules[row].length; col++) {
-	
-				var x = col * cs;
-				var dark = this.modules[row][col];
-			
-				if (dark) {
-					qr_mc.beginFill(0, 100);
-					qr_mc.moveTo(x, y);
-					qr_mc.lineTo(x + cs, y);
-					qr_mc.lineTo(x + cs, y + cs);
-					qr_mc.lineTo(x, y + cs);
-					qr_mc.endFill();
-				}
-			}
-		}
-		
-		return qr_mc;
-	},
-
-	setupTimingPattern : function() {
-		
-		for (var r = 8; r < this.moduleCount - 8; r++) {
-			if (this.modules[r][6] !== null) {
-				continue;
-			}
-			this.modules[r][6] = (r % 2 === 0);
-		}
-	
-		for (var c = 8; c < this.moduleCount - 8; c++) {
-			if (this.modules[6][c] !== null) {
-				continue;
-			}
-			this.modules[6][c] = (c % 2 === 0);
-		}
-	},
-	
-	setupPositionAdjustPattern : function() {
-	
-		var pos = QRUtil.getPatternPosition(this.typeNumber);
-		
-		for (var i = 0; i < pos.length; i++) {
-		
-			for (var j = 0; j < pos.length; j++) {
-			
-				var row = pos[i];
-				var col = pos[j];
-				
-				if (this.modules[row][col] !== null) {
-					continue;
-				}
-				
-				for (var r = -2; r <= 2; r++) {
-				
-					for (var c = -2; c <= 2; c++) {
-					
-						if (Math.abs(r) === 2 || 
-                            Math.abs(c) === 2 ||
-                            (r === 0 && c === 0) ) {
-							this.modules[row + r][col + c] = true;
-						} else {
-							this.modules[row + r][col + c] = false;
-						}
-					}
-				}
-			}
-		}
-	},
-	
-	setupTypeNumber : function(test) {
-	
-		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
-        var mod;
-	
-		for (var i = 0; i < 18; i++) {
-			mod = (!test && ( (bits >> i) & 1) === 1);
-			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
-		}
-	
-		for (var x = 0; x < 18; x++) {
-			mod = (!test && ( (bits >> x) & 1) === 1);
-			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
-		}
-	},
-	
-	setupTypeInfo : function(test, maskPattern) {
-	
-		var data = (this.errorCorrectLevel << 3) | maskPattern;
-		var bits = QRUtil.getBCHTypeInfo(data);
-        var mod;
-	
-		// vertical		
-		for (var v = 0; v < 15; v++) {
-	
-			mod = (!test && ( (bits >> v) & 1) === 1);
-	
-			if (v < 6) {
-				this.modules[v][8] = mod;
-			} else if (v < 8) {
-				this.modules[v + 1][8] = mod;
-			} else {
-				this.modules[this.moduleCount - 15 + v][8] = mod;
-			}
-		}
-	
-		// horizontal
-		for (var h = 0; h < 15; h++) {
-	
-			mod = (!test && ( (bits >> h) & 1) === 1);
-			
-			if (h < 8) {
-				this.modules[8][this.moduleCount - h - 1] = mod;
-			} else if (h < 9) {
-				this.modules[8][15 - h - 1 + 1] = mod;
-			} else {
-				this.modules[8][15 - h - 1] = mod;
-			}
-		}
-	
-		// fixed module
-		this.modules[this.moduleCount - 8][8] = (!test);
-	
-	},
-	
-	mapData : function(data, maskPattern) {
-		
-		var inc = -1;
-		var row = this.moduleCount - 1;
-		var bitIndex = 7;
-		var byteIndex = 0;
-		
-		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
-	
-			if (col === 6) col--;
-	
-			while (true) {
-	
-				for (var c = 0; c < 2; c++) {
-					
-					if (this.modules[row][col - c] === null) {
-						
-						var dark = false;
-	
-						if (byteIndex < data.length) {
-							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
-						}
-	
-						var mask = QRUtil.getMask(maskPattern, row, col - c);
-	
-						if (mask) {
-							dark = !dark;
-						}
-						
-						this.modules[row][col - c] = dark;
-						bitIndex--;
-	
-						if (bitIndex === -1) {
-							byteIndex++;
-							bitIndex = 7;
-						}
-					}
-				}
-								
-				row += inc;
-	
-				if (row < 0 || this.moduleCount <= row) {
-					row -= inc;
-					inc = -inc;
-					break;
-				}
-			}
-		}
-		
-	}
-
-};
-
-QRCode.PAD0 = 0xEC;
-QRCode.PAD1 = 0x11;
-
-QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
-	
-	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
-	
-	var buffer = new QRBitBuffer();
-	
-	for (var i = 0; i < dataList.length; i++) {
-		var data = dataList[i];
-		buffer.put(data.mode, 4);
-		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
-		data.write(buffer);
-	}
-
-	// calc num max data.
-	var totalDataCount = 0;
-	for (var x = 0; x < rsBlocks.length; x++) {
-		totalDataCount += rsBlocks[x].dataCount;
-	}
-
-	if (buffer.getLengthInBits() > totalDataCount * 8) {
-		throw new Error("code length overflow. (" + 
-            buffer.getLengthInBits() + 
-            ">" +  
-            totalDataCount * 8 + 
-            ")");
-	}
-
-	// end code
-	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
-		buffer.put(0, 4);
-	}
-
-	// padding
-	while (buffer.getLengthInBits() % 8 !== 0) {
-		buffer.putBit(false);
-	}
-
-	// padding
-	while (true) {
-		
-		if (buffer.getLengthInBits() >= totalDataCount * 8) {
-			break;
-		}
-		buffer.put(QRCode.PAD0, 8);
-		
-		if (buffer.getLengthInBits() >= totalDataCount * 8) {
-			break;
-		}
-		buffer.put(QRCode.PAD1, 8);
-	}
-
-	return QRCode.createBytes(buffer, rsBlocks);
-};
-
-QRCode.createBytes = function(buffer, rsBlocks) {
-
-	var offset = 0;
-	
-	var maxDcCount = 0;
-	var maxEcCount = 0;
-	
-	var dcdata = new Array(rsBlocks.length);
-	var ecdata = new Array(rsBlocks.length);
-	
-	for (var r = 0; r < rsBlocks.length; r++) {
-
-		var dcCount = rsBlocks[r].dataCount;
-		var ecCount = rsBlocks[r].totalCount - dcCount;
-
-		maxDcCount = Math.max(maxDcCount, dcCount);
-		maxEcCount = Math.max(maxEcCount, ecCount);
-		
-		dcdata[r] = new Array(dcCount);
-		
-		for (var i = 0; i < dcdata[r].length; i++) {
-			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
-		}
-		offset += dcCount;
-		
-		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
-		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
-
-		var modPoly = rawPoly.mod(rsPoly);
-		ecdata[r] = new Array(rsPoly.getLength() - 1);
-		for (var x = 0; x < ecdata[r].length; x++) {
-            var modIndex = x + modPoly.getLength() - ecdata[r].length;
-			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
-		}
-
-	}
-	
-	var totalCodeCount = 0;
-	for (var y = 0; y < rsBlocks.length; y++) {
-		totalCodeCount += rsBlocks[y].totalCount;
-	}
-
-	var data = new Array(totalCodeCount);
-	var index = 0;
-
-	for (var z = 0; z < maxDcCount; z++) {
-		for (var s = 0; s < rsBlocks.length; s++) {
-			if (z < dcdata[s].length) {
-				data[index++] = dcdata[s][z];
-			}
-		}
-	}
-
-	for (var xx = 0; xx < maxEcCount; xx++) {
-		for (var t = 0; t < rsBlocks.length; t++) {
-			if (xx < ecdata[t].length) {
-				data[index++] = ecdata[t][xx];
-			}
-		}
-	}
-
-	return data;
-
-};
-
-module.exports = QRCode;
-
-};
-return req("index")})();
-</script>
+<section id="pay" hidden aria-label="Pagamento PIX">
+  <p class="eyebrow">Cobrança PIX</p>
+  <h1 class="pay-t"><b id="pay-r"></b> gerou uma cobrança para você</h1>
+  <div class="cobr">
+    <div class="cobr-g">
+      <div><span class="k">Valor da cobrança</span><strong class="big" id="pay-v"></strong></div>
+      <div><span class="k" id="pay-m"></span><span class="k">Data de vencimento</span><b id="pay-d"></b></div>
+    </div>
+    <button class="btn primary block" id="pay-copy" type="button">Copiar código PIX</button>
+    <div class="code"><span class="k">PIX copia e cola</span><b id="pay-code"></b></div>
+  </div>
+  <div class="cobr">
+    <p class="ins-t">Como pagar</p>
+    <ol class="ins"><li>Toque em Copiar código PIX</li><li>Abra o app do seu banco e escolha Pix</li><li>Selecione Pix Copia e Cola e cole o código</li><li>Confira o valor e o nome de quem recebe, e confirme</li></ol>
+  </div>
+</section>
 
 <script>
 (function(){
@@ -1766,7 +540,7 @@ var el={
   un:$('#f-un'),mor:$('#f-mor'),fone:$('#f-fone'),venc:$('#f-venc'),stepL:$('#stepL'),
   ant:$('#f-ant'),atual:$('#f-atual'),antHint:$('#antHint'),err:$('#err'),dial:$('#dial'),
   cTar:$('#cTar'),cEn:$('#cEn'),cTaxaRow:$('#cTaxaRow'),cTaxa:$('#cTaxa'),cTot:$('#cTot'),
-  demo:$('#screen-demo'),leitura:$('#screen-leitura'),cta:$('#cta'),toast:$('#toast'),
+  demo:$('#screen-demo'),ctrl:$('#screen-ctrl'),leitura:$('#screen-leitura'),cta:$('#cta'),toast:$('#toast'),
   delAsk:$('#delAsk'),delConfirm:$('#delConfirm'),sheet:$('#sheet'),demoNote:$('#demoNote')
 };
 
@@ -1815,37 +589,20 @@ function updateCalc(){
   setErr(err);
   el.atual.setAttribute('aria-invalid',err?'true':'false');
 }
+var gidN=0;function nextGid(){gidN++;return 'bg'+gidN}
 function chartSVG(a,ym){
+  var gid=nextGid();
   var ms=[-5,-4,-3,-2,-1,0].map(function(n){return addM(ym,n)});
   var vals=ms.map(function(m){var c=calc(a,m);return c?c.cons:null});
   var max=Math.max.apply(null,[1].concat(vals.map(function(v){return v||0})));
-  var base=104,H=base-22,s='<svg class="chart-svg" viewBox="0 0 300 128" role="img" aria-label="Consumo em kWh nos últimos seis meses"><line class="axis" x1="0" y1="'+base+'" x2="300" y2="'+base+'"/>';
+  var base=104,H=base-22,s='<svg class="chart-svg" viewBox="0 0 300 128" role="img" aria-label="Consumo em kWh nos últimos seis meses"><defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8D2"/><stop offset="1" stop-color="#F23F70"/></linearGradient></defs><line class="axis" x1="0" y1="'+base+'" x2="300" y2="'+base+'"/>';
   ms.forEach(function(m,i){
     var cx=25+i*50,v=vals[i],sel=i===5;
     if(v==null){s+='<text class="lbl" x="'+cx+'" y="'+(base-6)+'" text-anchor="middle">–</text>'}
-    else{var h=Math.max(2,v/max*H);s+='<rect class="bar'+(sel?' sel':'')+'" x="'+(cx-14)+'" y="'+(base-h)+'" width="28" height="'+h+'" rx="4"/><text class="val'+(sel?' sel':'')+'" x="'+cx+'" y="'+(base-h-5)+'" text-anchor="middle">'+kwh(v)+'</text>'}
+    else{var h=Math.max(2,v/max*H);s+='<rect class="bar'+(sel?' sel':'')+'"'+(sel?' style="fill:url(#'+gid+')"':'')+' x="'+(cx-14)+'" y="'+(base-h)+'" width="28" height="'+h+'" rx="4"/><text class="val'+(sel?' sel':'')+'" x="'+cx+'" y="'+(base-h-5)+'" text-anchor="middle">'+kwh(v)+'</text>'}
     s+='<text class="lbl'+(sel?' sel':'')+'" x="'+cx+'" y="121" text-anchor="middle">'+mes3(m)+'</text>';
   });
   return s+'</svg>';
-}
-function msgText(a,ym,c,code){
-  var L=[];
-  L.push('*Demonstrativo de energia – '+mesTxt(ym)+'*');
-  L.push(String(state.cfg.predio||'').trim()+' · Ap '+a.un);
-  L.push('');
-  L.push('Olá'+(a.morador?', '+a.morador.trim().split(/\s+/)[0]:'')+'! Segue o consumo de luz do seu apartamento.');
-  L.push('');
-  L.push('Leitura anterior: '+kwh(c.ant)+' kWh');
-  L.push('Leitura atual: '+kwh(c.atual)+' kWh');
-  L.push('Consumo: '+kwh(c.cons)+' kWh');
-  L.push('Tarifa: R$ '+fmt(c.tarifa,2,4)+'/kWh');
-  if(c.taxa>0)L.push('Taxa fixa: '+brl(c.taxa));
-  L.push('');
-  L.push('*Total: '+brl(c.total)+'*');
-  L.push('Vencimento: '+venc(ym,true));
-  if(code){L.push('');L.push('Para pagar, use o PIX copia e cola (código abaixo):');L.push(code)}
-  else if(String(state.cfg.pix||'').trim())L.push('PIX: '+state.cfg.pix.trim());
-  return L.join('\n');
 }
 function waURL(a,txt){
   var d=String(a.fone||'').replace(/\D/g,''),n='';
@@ -1867,7 +624,6 @@ function renderDemo(){
     cmp=r===0?'<p class="cmp flat">'+ICON.eq+'Igual a '+pm+' ('+kwh(pc.cons)+' kWh)</p>'
       :'<p class="cmp '+(p>0?'up':'down')+'">'+(p>0?ICON.up:ICON.down)+r+'% '+(p>0?'acima':'abaixo')+' de '+pm+' ('+kwh(pc.cons)+' kWh)</p>';
   }
-  var pix=String(state.cfg.pix||'').trim();
   var rows=[['Leitura anterior',kwh(c.ant)+' kWh'],['Leitura atual',kwh(c.atual)+' kWh'],['Consumo',kwh(c.cons)+' kWh',1],['Tarifa','R$ '+fmt(c.tarifa,2,4)+'/kWh'],['Energia',brl(c.energia)]];
   if(c.taxa>0)rows.push(['Taxa fixa',brl(c.taxa)]);
   var paperHTML='<article class="paper"><header class="paper-h"><div><p class="eyebrow">Demonstrativo de energia</p><h2>'+mesTxt(ym)+'</h2></div><span class="mark" aria-hidden="true">'+ICON.bolt+'</span></header><div class="paper-b">'+
@@ -1876,29 +632,23 @@ function renderDemo(){
     '<ul class="lines sep-top">'+rows.map(function(r){return '<li'+(r[2]?' class="strong"':'')+'><span class="k">'+r[0]+'</span><span class="lead"></span><span class="v">'+esc(r[1])+'</span></li>'}).join('')+'</ul>'+
     cmp+
     '<div class="sep-top"><p class="chart-t">Consumo nos últimos meses (kWh)</p>'+chartSVG(a,ym)+'</div>'+
-    (pix?'<div class="pix"><span>Pagamento via PIX</span><b>'+esc(pix)+'</b></div>':'')+
     '<p class="paper-f sep-top">'+esc(String(state.cfg.predio||'').trim())+'</p></div></article>';
   h+='<h2 class="sec">Demonstrativo</h2>'+paperHTML;
-  var code=c.total>0?pixPayload(c.total):'',qm=code?qrMatrix(code):null,hasPix=!!(code&&qm);
-  var txt=msgText(a,ym,c,hasPix?code:'');
-  if(hasPix){h+='<h2 class="sec">Cobrança PIX</h2>'+cobrHTML(ym,c,code,qm)}
-  else{
-    h+='<h2 class="sec">Cobrança PIX</h2><div class="card nopix"><p><strong>Cobrança não gerada.</strong> '+(c.total>0?'Cadastre sua chave PIX nos ajustes para enviar a cobrança junto com o demonstrativo.':'O total deste mês é zero, então não há o que cobrar.')+'</p>'+(c.total>0?'<button class="btn sm" id="goCfg" type="button">Abrir ajustes</button>':'')+'</div>';
-  }
+  var code=c.total>0?pixPayload(c.total):'',hasPix=!!code;
+  var link=hasPix?payLink(a,ym,c,code):'';
+  h+='<h2 class="sec">Cobrança PIX</h2>';
+  if(hasPix)h+=cobrHTML(a,ym,c,link);
+  else h+='<div class="card nopix"><p><strong>Cobrança não gerada.</strong> '+(c.total>0?'Cadastre sua chave PIX nos ajustes para enviar a cobrança junto com o demonstrativo.':'O total deste mês é zero, então não há o que cobrar.')+'</p>'+(c.total>0?'<button class="btn sm" id="goCfg" type="button">Abrir ajustes</button>':'')+'</div>';
   h+='<div class="actions"><button class="btn primary block" id="sendImgs" type="button">'+ICON.send+(hasPix?'Enviar demonstrativo e cobrança':'Enviar demonstrativo')+'</button>'+
-    '<a class="btn block" id="wa" target="_blank" rel="noopener" href="'+waURL(a,txt)+'">'+ICON.send+'Enviar texto pelo WhatsApp</a>'+
-    '<div class="row2">'+(hasPix?'<button class="btn" id="copyPix" type="button">'+ICON.copy+'Copiar código PIX</button>':'<span></span>')+'<button class="btn" id="copy" type="button">'+ICON.copy+'Copiar mensagem</button></div>'+
-    '<p class="hint">'+(a.fone?'O texto abre a conversa com '+esc(a.fone)+'. ':'Sem WhatsApp cadastrado: você escolhe o contato ao enviar. ')+'As imagens abrem o menu de compartilhar do celular: escolha o WhatsApp e o contato.</p>'+
-    '<details class="msg"><summary>Ver mensagem</summary><textarea id="msgtxt" readonly aria-label="Texto da mensagem"></textarea></details></div>';
+    (hasPix?'<a class="btn block" id="wa" target="_blank" rel="noopener" href="'+waURL(a,link)+'">'+ICON.send+'Enviar link PIX pelo WhatsApp</a><button class="btn block" id="copyLink" type="button">'+ICON.copy+'Copiar link de pagamento</button>':'')+
+    '<p class="hint">'+(a.fone?'O WhatsApp abre a conversa com '+esc(a.fone)+'. ':'Sem WhatsApp cadastrado: você escolhe o contato ao enviar. ')+'As imagens abrem o menu de compartilhar do celular: escolha o WhatsApp e o contato.</p></div>';
   el.demo.innerHTML=h;
-  $('#msgtxt').value=txt;
-  $('#copy').addEventListener('click',function(){copyText(txt,'Mensagem copiada',$('#msgtxt'))});
-  var cp=$('#copyPix');
-  if(cp)cp.addEventListener('click',function(){copyText(code,'Código PIX copiado',$('#pixcode'))});
+  var cl=$('#copyLink');
+  if(cl)cl.addEventListener('click',function(){copyText(link,'Link de pagamento copiado',null)});
   var gc=$('#goCfg');
   if(gc)gc.addEventListener('click',openSheet);
-  $('#sendImgs').addEventListener('click',function(){sendImages(a,ym,c,hasPix?code:'',qm,txt)});
-  prepareImages(a,ym,c,hasPix?code:'',qm).catch(function(){});
+  $('#sendImgs').addEventListener('click',function(){sendImages(a,ym,c,code,link)});
+  prepareImages(a,ym,c,code).catch(function(){});
 }
 function renderAll(){renderHeader();renderChips();loadForm();setTab(state.tab,true)}
 
@@ -1907,11 +657,13 @@ function setTab(t,keep){
   state.tab=t;
   document.body.setAttribute('data-tab',t);
   el.leitura.hidden=t!=='leitura';
+  el.ctrl.hidden=t!=='ctrl';
   el.demo.hidden=t!=='demo';
   el.cta.hidden=t!=='leitura';
-  $('#tab-leitura').setAttribute('aria-selected',t==='leitura');
-  $('#tab-demo').setAttribute('aria-selected',t==='demo');
-  el.h1.textContent=t==='leitura'?'Lançar leitura':'Demonstrativo e cobrança';
+  el.chips.hidden=t==='ctrl';
+  ['leitura','ctrl','demo'].forEach(function(k){$('#tab-'+k).setAttribute('aria-selected',t===k)});
+  el.h1.textContent=t==='leitura'?'Lançar leitura':(t==='ctrl'?'Controle geral':'Demonstrativo e cobrança');
+  if(t==='ctrl')renderCtrl();
   if(t==='demo')renderDemo();
   if(!keep)window.scrollTo(0,0);
 }
@@ -1926,7 +678,7 @@ function toast(msg,label,fn){
   toastTimer=setTimeout(function(){el.toast.hidden=true},5000);
 }
 
-/* ---------- PIX (copia e cola) e QR Code ---------- */
+/* ---------- PIX (copia e cola) e link de pagamento ---------- */
 function ascii(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9 ]/g,' ').replace(/\s+/g,' ').trim()}
 function crc16(str){
   var crc=0xFFFF;
@@ -1958,43 +710,38 @@ function pixPayload(total){
     (total>0?f('54',total.toFixed(2)):'')+f('58','BR')+f('59',name)+f('60',city)+f('62',f('05','***'))+'6304';
   return p+crc16(p);
 }
-function qrMatrix(text){
-  try{
-    var q=new QRLib(0,0);q.addData(text);q.make();
-    var n=q.getModuleCount(),m=[];
-    for(var r=0;r<n;r++){var row=[];for(var k=0;k<n;k++)row.push(!!q.isDark(r,k));m.push(row)}
-    return m;
-  }catch(e){return null}
+function b64u(s){
+  var by=new TextEncoder().encode(s),b='';
+  by.forEach(function(x){b+=String.fromCharCode(x)});
+  return btoa(b).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
-function qrSVG(m){
-  var n=m.length,Q=4,d='';
-  m.forEach(function(row,r){
-    var k=0;
-    while(k<n){
-      if(row[k]){var st=k;while(k<n&&row[k])k++;d+='M'+(st+Q)+' '+(r+Q)+'h'+(k-st)+'v1h-'+(k-st)+'z'}
-      else k++;
-    }
-  });
-  return '<svg class="qr" viewBox="0 0 '+(n+2*Q)+' '+(n+2*Q)+'" role="img" aria-label="QR Code PIX" shape-rendering="crispEdges"><rect class="bg" width="100%" height="100%"/><path class="fg" d="'+d+'"/></svg>';
+function unb64u(s){
+  s=String(s).replace(/-/g,'+').replace(/_/g,'/');
+  while(s.length%4)s+='=';
+  var bin=atob(s),by=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++)by[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(by);
+}
+function payLink(a,ym,c,code){
+  var d={c:code,t:c.total,v:venc(ym,true),m:mesTxt(ym),u:'Ap '+a.un,r:recName()};
+  var base=/^(https?|file):/.test(location.href)?location.href.split('#')[0]:'';
+  return base+'#pagar='+b64u(JSON.stringify(d));
 }
 function recName(){return String(state.cfg.recebedor||'').trim()||String(state.cfg.predio||'').trim()||'Seu prédio'}
 function hoje(){var d=new Date();return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()}
-function cobrHTML(ym,c,code,m){
-  return '<article class="cobr"><div class="qrwrap">'+qrSVG(m)+'</div>'+
+function cobrHTML(a,ym,c,link){
+  return '<article class="cobr">'+
     '<h3 class="cobr-t"><b>'+esc(recName())+'</b> gerou uma cobrança para você</h3>'+
     '<div class="cobr-g"><div><span class="k">Valor da cobrança</span><strong class="big">'+brl(c.total)+'</strong></div>'+
     '<div><span class="k">Realizada em</span><b>'+hoje()+'</b><span class="k">Data de vencimento</span><b>'+venc(ym,true)+'</b></div></div>'+
     '<hr class="rule"><p class="ins-t">Instruções de pagamento:</p>'+
-    '<ol class="ins"><li>Abra o aplicativo do seu banco</li><li>Selecione a opção de pagamento</li><li>Leia o QR Code ou copie e cole o código enviado abaixo.</li></ol>'+
-    '<div class="code"><span class="k">PIX copia e cola</span><b id="pixcode">'+esc(code)+'</b></div></article>';
+    '<ol class="ins"><li>Toque no link de pagamento PIX</li><li>Toque em Copiar código PIX</li><li>No app do seu banco, escolha Pix, depois Pix Copia e Cola, e cole o código</li></ol>'+
+    '<a class="btn primary block" id="paylink" target="_blank" rel="noopener" href="'+esc(link)+'">Pagar com PIX · '+brl(c.total)+'</a></article>';
 }
 function copyText(t,okMsg,node){
   var fb=function(){
-    if(node){
-      if(node.tagName==='TEXTAREA'){var d=node.closest('details');if(d)d.open=true;node.focus();node.select()}
-      else{var r=document.createRange();r.selectNodeContents(node);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r)}
-    }
-    toast('Selecione e copie o texto');
+    if(node){var r=document.createRange();r.selectNodeContents(node);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r)}
+    toast('Não foi possível copiar aqui. Selecione o texto e copie.');
   };
   try{navigator.clipboard.writeText(t).then(function(){toast(okMsg)},fb)}catch(e){fb()}
 }
@@ -2002,6 +749,7 @@ function copyText(t,okMsg,node){
 /* ---------- imagens (demonstrativo e cobrança) ---------- */
 function rr(x,px,py,w,h,r){x.beginPath();x.moveTo(px+r,py);x.arcTo(px+w,py,px+w,py+h,r);x.arcTo(px+w,py+h,px,py+h,r);x.arcTo(px,py+h,px,py,r);x.arcTo(px,py,px+w,py,r);x.closePath()}
 var FD='Archivo, system-ui, sans-serif',FB='"Public Sans", system-ui, sans-serif',FM='"IBM Plex Mono", ui-monospace, monospace';
+var C_MUTED='#D5CCEB',C_MINT='#CDF6F2',C_TEAL='#5FD8D2',C_HOT='#F23F70';
 function fontsReady(){
   try{
     return Promise.all([document.fonts.load('800 80px Archivo'),document.fonts.load('300 60px "Public Sans"'),document.fonts.load('400 30px "Public Sans"'),
@@ -2020,59 +768,91 @@ function wrapLines(x,text,font,maxW){
   if(cur)lines.push(cur);
   return lines;
 }
+function paintBg(x,W,H){
+  var g=x.createLinearGradient(W*0.1,0,W*0.9,H);
+  g.addColorStop(0,'#2C6E9C');g.addColorStop(.28,'#5A3A89');g.addColorStop(.58,'#8E1F66');g.addColorStop(.82,'#2B0F42');g.addColorStop(1,'#0D0A28');
+  x.fillStyle=g;x.fillRect(0,0,W,H);
+  var t=x.createRadialGradient(W*.92,0,0,W*.92,0,W*.9);
+  t.addColorStop(0,'rgba(95,216,210,.5)');t.addColorStop(1,'rgba(95,216,210,0)');
+  x.fillStyle=t;x.fillRect(0,0,W,H);
+  var m=x.createRadialGradient(0,H*.8,0,0,H*.8,W*.95);
+  m.addColorStop(0,'rgba(224,25,95,.55)');m.addColorStop(1,'rgba(224,25,95,0)');
+  x.fillStyle=m;x.fillRect(0,0,W,H);
+}
+function glass(x,px,py,w,h,r){rr(x,px,py,w,h,r);x.fillStyle='rgba(12,8,36,.58)';x.fill();x.strokeStyle='rgba(255,255,255,.2)';x.lineWidth=2;x.stroke()}
 function drawDemo(a,ym,c){
   var rows=[['Leitura anterior',kwh(c.ant)+' kWh'],['Leitura atual',kwh(c.atual)+' kWh'],['Consumo',kwh(c.cons)+' kWh',1],['Tarifa','R$ '+fmt(c.tarifa,2,4)+'/kWh'],['Energia',brl(c.energia)]];
   if(c.taxa>0)rows.push(['Taxa fixa',brl(c.taxa)]);
-  var W=1080,P=72,H=800+66*rows.length+110;
+  var ms=[-5,-4,-3,-2,-1,0].map(function(n){return addM(ym,n)});
+  var vals=ms.map(function(m){var cc=calc(a,m);return cc?cc.cons:null});
+  var max=Math.max.apply(null,[1].concat(vals.map(function(v){return v||0})));
+  var W=1080,P=84,panelTop=310,pillTop=panelTop+250,linesY=pillTop+190+84;
+  var lastLine=linesY+66*(rows.length-1),sepY=lastLine+50,titleY=lastLine+110;
+  var barH=230,base=titleY+36+36+barH,panelBottom=base+100,H=panelBottom+170;
   var cv=document.createElement('canvas');cv.width=W;cv.height=H;
   var x=cv.getContext('2d');
-  x.fillStyle='#FFFFFF';x.fillRect(0,0,W,H);
-  x.fillStyle='#1B74C5';x.fillRect(0,0,W,260);
+  paintBg(x,W,H);
   x.textBaseline='alphabetic';x.textAlign='left';
-  x.fillStyle='#DCEBFA';x.font='700 28px '+FM;x.fillText('DEMONSTRATIVO DE ENERGIA',P,86);
-  x.fillStyle='#FFFFFF';x.font='800 88px '+FD;x.fillText(mesTxt(ym),P,184);
-  x.fillStyle='#DCEBFA';x.font='500 30px '+FB;x.fillText(clipText(x,String(state.cfg.predio||'').trim(),W-2*P),P,232);
-  var meta=[['Unidade','Ap '+a.un],['Morador',a.morador||'Não informado'],['Vencimento',venc(ym,true)]],y=326;
+  x.fillStyle=C_MINT;x.font='700 28px '+FM;x.fillText('DEMONSTRATIVO DE ENERGIA',P,96);
+  var fs=104;x.font='800 '+fs+'px '+FD;
+  while(fs>56&&x.measureText(mesTxt(ym)).width>W-2*P){fs-=4;x.font='800 '+fs+'px '+FD}
+  x.fillStyle='#FFFFFF';x.fillText(mesTxt(ym),P,96+30+fs*0.8);
+  x.fillStyle=C_MUTED;x.font='500 32px '+FB;x.fillText(clipText(x,String(state.cfg.predio||'').trim(),W-2*P),P,262);
+  glass(x,48,panelTop,W-96,panelBottom-panelTop,40);
+  var meta=[['Unidade','Ap '+a.un],['Morador',a.morador||'Não informado'],['Vencimento',venc(ym,true)]],y=panelTop+88;
   meta.forEach(function(mt){
-    x.textAlign='left';x.fillStyle='#586A80';x.font='500 28px '+FB;x.fillText(mt[0],P,y);
-    x.textAlign='right';x.fillStyle='#0E1A2B';x.font='600 32px '+FB;x.fillText(clipText(x,mt[1],620),W-P,y);
-    y+=70;
+    x.textAlign='left';x.fillStyle=C_MUTED;x.font='500 28px '+FB;x.fillText(mt[0],P,y);
+    x.textAlign='right';x.fillStyle='#FFFFFF';x.font='600 32px '+FB;x.fillText(clipText(x,mt[1],620),W-P,y);
+    y+=64;
   });
   x.textAlign='left';
-  rr(x,P,560,W-2*P,200,28);x.fillStyle='#E1EEFA';x.fill();
-  x.fillStyle='#586A80';x.font='700 26px '+FM;x.fillText('TOTAL A PAGAR',P+36,622);
-  x.fillStyle='#0E1A2B';x.font='600 92px '+FM;x.fillText(brl(c.total),P+36,722);
-  y=820;
+  var pg=x.createLinearGradient(P,0,W-P,0);pg.addColorStop(0,'rgba(95,216,210,.3)');pg.addColorStop(1,'rgba(242,63,112,.38)');
+  rr(x,P-12,pillTop,W-2*P+24,190,28);x.fillStyle=pg;x.fill();x.strokeStyle='rgba(255,255,255,.28)';x.lineWidth=2;x.stroke();
+  x.fillStyle=C_MINT;x.font='700 26px '+FM;x.fillText('TOTAL A PAGAR',P+24,pillTop+62);
+  x.fillStyle='#FFFFFF';x.font='600 92px '+FM;x.fillText(brl(c.total),P+24,pillTop+158);
+  y=linesY;
   rows.forEach(function(r){
-    x.textAlign='left';x.font=(r[2]?'700':'500')+' 32px '+FB;x.fillStyle=r[2]?'#0E1A2B':'#586A80';x.fillText(r[0],P,y);
+    x.textAlign='left';x.font=(r[2]?'700':'500')+' 32px '+FB;x.fillStyle=r[2]?'#FFFFFF':C_MUTED;x.fillText(r[0],P,y);
     var kw=x.measureText(r[0]).width;
-    x.textAlign='right';x.font='600 32px '+FM;x.fillStyle='#0E1A2B';x.fillText(r[1],W-P,y);
+    x.textAlign='right';x.font='600 32px '+FM;x.fillStyle='#FFFFFF';x.fillText(r[1],W-P,y);
     var vw=x.measureText(r[1]).width;
-    x.strokeStyle='#B7C4D3';x.lineWidth=3;x.lineCap='round';x.setLineDash([2,10]);
+    x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=3;x.lineCap='round';x.setLineDash([2,10]);
     x.beginPath();x.moveTo(P+kw+18,y-6);x.lineTo(W-P-vw-18,y-6);x.stroke();x.setLineDash([]);
     y+=66;
   });
-  x.textAlign='center';x.fillStyle='#586A80';x.font='500 24px '+FB;
-  x.fillText('Gerado em '+hoje()+' · Controle de Luz',W/2,H-50);
+  x.strokeStyle='rgba(255,255,255,.3)';x.lineWidth=2;x.setLineDash([10,10]);
+  x.beginPath();x.moveTo(P,sepY);x.lineTo(W-P,sepY);x.stroke();x.setLineDash([]);
+  x.textAlign='left';x.fillStyle=C_MUTED;x.font='700 24px '+FM;x.fillText('CONSUMO NOS ÚLTIMOS MESES (KWH)',P,titleY);
+  var slot=(W-2*P)/6,bw=84,top=base-barH;
+  vals.forEach(function(v,i){
+    var cx=P+slot*i+slot/2,sel=i===5;
+    x.textAlign='center';
+    if(v==null){x.fillStyle=C_MUTED;x.font='500 28px '+FM;x.fillText('–',cx,base-12)}
+    else{
+      var h=Math.max(6,v/max*barH);
+      var bg=x.createLinearGradient(0,base-h,0,base);
+      if(sel){bg.addColorStop(0,C_TEAL);bg.addColorStop(1,C_HOT)}else{bg.addColorStop(0,'rgba(255,255,255,.42)');bg.addColorStop(1,'rgba(255,255,255,.22)')}
+      rr(x,cx-bw/2,base-h,bw,h,14);x.fillStyle=bg;x.fill();
+      x.fillStyle=sel?'#FFFFFF':C_MUTED;x.font=(sel?'700':'500')+' 26px '+FM;x.fillText(kwh(v),cx,base-h-14);
+    }
+    x.fillStyle=sel?'#FFFFFF':C_MUTED;x.font=(sel?'700':'500')+' 28px '+FB;x.fillText(mes3(ms[i]),cx,base+46);
+  });
+  x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=2;x.beginPath();x.moveTo(P,base);x.lineTo(W-P,base);x.stroke();
+  x.textAlign='center';x.fillStyle=C_MUTED;x.font='500 24px '+FB;
+  x.fillText('Gerado em '+hoje()+' · Controle de Luz',W/2,panelBottom+90);
   return toBlob(cv);
 }
-function drawCobr(a,ym,c,m){
-  var W=1080,P=72,H0=2200,tall=document.createElement('canvas');
-  tall.width=W;tall.height=H0;
-  var x=tall.getContext('2d');
-  x.fillStyle='#FFFFFF';x.fillRect(0,0,W,H0);
+function paintCobr(x,W,a,ym,c){
+  var P=84,maxW=W-2*P;
   x.textBaseline='alphabetic';x.textAlign='left';
-  var n=m.length,Q=4,S=Math.floor(400/(n+2*Q)),qy=80,ox=P-Q*S;
-  x.fillStyle='#0E1A2B';
-  for(var r=0;r<n;r++)for(var k=0;k<n;k++)if(m[r][k])x.fillRect(ox+(Q+k)*S,qy+(Q+r)*S,S,S);
-  var y=qy+(Q+n)*S+130,fs=84,lh=108,maxW=W-2*P;
-  var words=[];
+  x.fillStyle=C_MINT;x.font='700 28px '+FM;
+  x.fillText(clipText(x,'COBRANÇA PIX · AP '+String(a.un).toUpperCase()+' · '+mesTxt(ym).toUpperCase(),maxW),P,110);
+  var y=250,fs=88,lh=112,words=[],line=[],lw=0;
   recName().split(/\s+/).forEach(function(w){words.push({t:w,b:1})});
   'gerou uma cobrança para você'.split(' ').forEach(function(w){words.push({t:w,b:0})});
-  var line=[],lw=0;
   function flush(){
     var cx=P;
-    line.forEach(function(w){x.font=(w.b?'800 ':'300 ')+fs+'px '+(w.b?FD:FB);x.fillStyle='#0E1A2B';x.fillText(w.t,cx,y);cx+=w.w});
+    line.forEach(function(w){x.font=(w.b?'800 ':'300 ')+fs+'px '+(w.b?FD:FB);x.fillStyle='#FFFFFF';x.fillText(w.t,cx,y);cx+=w.w});
     y+=lh;line=[];lw=0;
   }
   words.forEach(function(w){
@@ -2082,46 +862,58 @@ function drawCobr(a,ym,c,m){
     w.w=wt+sp;line.push(w);lw+=wt+sp;
   });
   if(line.length)flush();
-  y+=40;
+  y+=50;
   var val=brl(c.total),vs=104;
   x.font='300 '+vs+'px '+FB;
   while(vs>56&&x.measureText(val).width>500){vs-=4;x.font='300 '+vs+'px '+FB}
-  x.fillStyle='#586A80';x.font='400 36px '+FB;x.fillText('Valor da cobrança',P,y+40);
-  x.fillStyle='#0E1A2B';x.font='300 '+vs+'px '+FB;x.fillText(val,P,y+40+20+vs*0.85);
+  x.fillStyle=C_MUTED;x.font='400 36px '+FB;x.fillText('Valor da cobrança',P,y+40);
+  x.fillStyle='#FFFFFF';x.font='300 '+vs+'px '+FB;x.fillText(val,P,y+40+20+vs*0.85);
   var rx=640;
-  x.fillStyle='#586A80';x.font='400 34px '+FB;x.fillText('Realizada em',rx,y+36);
-  x.fillStyle='#0E1A2B';x.font='700 40px '+FB;x.fillText(hoje(),rx,y+88);
-  x.fillStyle='#586A80';x.font='400 34px '+FB;x.fillText('Data de vencimento',rx,y+150);
-  x.fillStyle='#0E1A2B';x.font='700 40px '+FB;x.fillText(venc(ym,true),rx,y+202);
-  y+=270;
-  x.fillStyle='#0E1A2B';x.fillRect(P,y,W-2*P,4);
-  y+=84;
-  x.font='700 38px '+FB;x.fillText('Instruções de pagamento:',P,y);
-  y+=30;
-  ['1. Abra o aplicativo do seu banco','2. Selecione a opção de pagamento','3. Leia o QR Code ou copie e cole o código enviado abaixo.'].forEach(function(t){
-    wrapLines(x,t,'400 38px '+FB,maxW).forEach(function(l){y+=58;x.font='400 38px '+FB;x.fillStyle='#0E1A2B';x.fillText(l,P,y)});
+  x.fillStyle=C_MUTED;x.font='400 34px '+FB;x.fillText('Realizada em',rx,y+36);
+  x.fillStyle='#FFFFFF';x.font='700 40px '+FB;x.fillText(hoje(),rx,y+88);
+  x.fillStyle=C_MUTED;x.font='400 34px '+FB;x.fillText('Data de vencimento',rx,y+150);
+  x.fillStyle='#FFFFFF';x.font='700 40px '+FB;x.fillText(venc(ym,true),rx,y+202);
+  y+=282;
+  var rg=x.createLinearGradient(P,0,W-P,0);rg.addColorStop(0,C_TEAL);rg.addColorStop(1,C_HOT);
+  rr(x,P,y,maxW,8,4);x.fillStyle=rg;x.fill();
+  y+=88;
+  x.fillStyle='#FFFFFF';x.font='700 38px '+FB;x.fillText('Instruções de pagamento:',P,y);
+  var barTop=y+22;y+=18;
+  ['1. Toque no link de pagamento PIX enviado junto com esta imagem','2. Toque em Copiar código PIX','3. No app do seu banco, escolha Pix, depois Pix Copia e Cola, e cole o código'].forEach(function(t){
+    wrapLines(x,t,'400 38px '+FB,maxW-36).forEach(function(l){y+=58;x.font='400 38px '+FB;x.fillStyle='#FFFFFF';x.fillText(l,P+36,y)});
   });
-  y+=90;
-  x.textAlign='center';x.fillStyle='#586A80';x.font='500 24px '+FB;
-  x.fillText(clipText(x,String(state.cfg.predio||'').trim()+' · Controle de Luz',W-2*P),W/2,y);
-  var H=y+60,out=document.createElement('canvas');
-  out.width=W;out.height=H;
-  var ox2=out.getContext('2d');ox2.drawImage(tall,0,0);
-  return toBlob(out);
+  x.fillStyle=C_TEAL;rr(x,P,barTop,6,y+14-barTop,3);x.fill();
+  y+=70;
+  rr(x,P,y,maxW,112,56);x.strokeStyle=C_TEAL;x.lineWidth=4;x.stroke();
+  x.textAlign='center';x.fillStyle=C_MINT;x.font='700 34px '+FM;x.fillText('PAGUE PELO LINK PIX ENVIADO',W/2,y+70);
+  y+=112+80;
+  x.fillStyle=C_MUTED;x.font='500 24px '+FB;
+  x.fillText(clipText(x,String(state.cfg.predio||'').trim()+' · Controle de Luz',maxW),W/2,y);
+  return y;
+}
+function drawCobr(a,ym,c){
+  var W=1080,sc=document.createElement('canvas');sc.width=W;sc.height=2600;
+  var endY=paintCobr(sc.getContext('2d'),W,a,ym,c),H=endY+70;
+  var cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  var x=cv.getContext('2d');
+  paintBg(x,W,H);
+  paintCobr(x,W,a,ym,c);
+  return toBlob(cv);
 }
 function mkFile(blob,name){
   try{return new File([blob],name,{type:'image/png'})}catch(e){blob.name=name;return blob}
 }
 var imgCache=null,imgBusy=null;
-function imgKeyOf(a,ym,c,code){return JSON.stringify([a.id,a.un,a.morador,ym,c,state.cfg.predio,state.cfg.recebedor,state.cfg.pix,state.cfg.cidade,code])}
-function prepareImages(a,ym,c,code,m){
+function imgKeyOf(a,ym,c,code){return JSON.stringify([a.id,a.un,a.morador,ym,c,state.cfg.predio,state.cfg.recebedor,state.cfg.pix,state.cfg.cidade,code,calcHist(a,ym)])}
+function calcHist(a,ym){return [-5,-4,-3,-2,-1].map(function(n){var cc=calc(a,addM(ym,n));return cc?cc.cons:null})}
+function prepareImages(a,ym,c,code){
   var key=imgKeyOf(a,ym,c,code);
   if(imgCache&&imgCache.key===key)return Promise.resolve(imgCache.files);
   if(imgBusy&&imgBusy.key===key)return imgBusy.p;
   var suf='-ap'+String(a.un).replace(/[^\w-]/g,'')+'-'+ym+'.png';
   var p=fontsReady().then(function(){
     var jobs=[drawDemo(a,ym,c)];
-    if(code&&m)jobs.push(drawCobr(a,ym,c,m));
+    if(code)jobs.push(drawCobr(a,ym,c));
     return Promise.all(jobs);
   }).then(function(bl){
     var files=[mkFile(bl[0],'demonstrativo'+suf)];
@@ -2142,7 +934,7 @@ function saveFiles(files){
     return files.reduce(function(p,f){return p.then(function(){return dl.save({filename:f.name,data:f})})},Promise.resolve())
       .then(function(){toast(files.length>1?'Imagens salvas':'Imagem salva')},function(e){
         if(e&&e.code==='declined')return;
-        toast('Não foi possível salvar as imagens aqui. Use Enviar texto pelo WhatsApp.');
+        toast('Não foi possível salvar as imagens aqui.');
       });
   }
   files.forEach(function(f,i){
@@ -2155,11 +947,13 @@ function saveFiles(files){
   toast(files.length>1?'Imagens baixadas':'Imagem baixada');
   return Promise.resolve();
 }
-function sendImages(a,ym,c,code,m,txt){
+function sendImages(a,ym,c,code,link){
   var key=imgKeyOf(a,ym,c,code),ready=!!(imgCache&&imgCache.key===key);
   var go=function(files){
     if(!canShareFiles(files))return saveFiles(files);
-    return navigator.share({files:files,text:txt,title:'Demonstrativo de energia – '+mesTxt(ym)}).catch(function(e){
+    var data={files:files,title:'Demonstrativo de energia – '+mesTxt(ym)};
+    if(link)data.text=link;
+    return navigator.share(data).catch(function(e){
       if(e&&e.name==='AbortError')return;
       if(!ready&&e&&e.name==='NotAllowedError'){toast('Imagens prontas. Toque em enviar de novo.');return}
       return saveFiles(files);
@@ -2167,15 +961,129 @@ function sendImages(a,ym,c,code,m,txt){
   };
   if(ready){go(imgCache.files);return}
   toast('Preparando as imagens…');
-  prepareImages(a,ym,c,code,m).then(go,function(){toast('Não foi possível gerar as imagens.')});
+  prepareImages(a,ym,c,code).then(go,function(){toast('Não foi possível gerar as imagens.')});
 }
+
+/* ---------- controle geral ---------- */
+var ctrlScope='all',ctrlN=6;
+function apById(id){return state.aps.filter(function(a){return a.id===id})[0]}
+function agg(ids,ym){
+  var cons=0,tot=0,n=0;
+  ids.forEach(function(id){var cc=calc({id:id},ym);if(cc){cons+=cc.cons;tot+=cc.total;n++}});
+  return {cons:r2(cons),total:r2(tot),n:n};
+}
+function varTxt(cur,prev){
+  if(prev==null||prev<=0)return 'sem mês anterior';
+  var p=(cur-prev)/prev*100,r=Math.round(Math.abs(p));
+  return r===0?'igual ao mês anterior':(p>0?'▲ ':'▼ ')+r+'% vs mês anterior';
+}
+function barSVG(vals,labels,fmtV,aria){
+  var n=vals.length,base=118,H=base-28,slot=300/n,bw=Math.min(28,slot*.62);
+  var max=Math.max.apply(null,[1].concat(vals.map(function(v){return v||0})));
+  var maxI=-1,mv=-1;
+  vals.forEach(function(v,i){if(v!=null&&v>mv){mv=v;maxI=i}});
+  var fsz=n>6?'font-size:8px':'';
+  var gid=nextGid();
+  var s='<svg class="chart-svg" viewBox="0 0 300 140" role="img" aria-label="'+esc(aria)+'"><defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8D2"/><stop offset="1" stop-color="#F23F70"/></linearGradient></defs><line class="axis" x1="0" y1="'+base+'" x2="300" y2="'+base+'"/>';
+  vals.forEach(function(v,i){
+    var cx=slot*i+slot/2,sel=i===n-1;
+    if(v==null){s+='<text class="lbl" style="'+fsz+'" x="'+cx+'" y="'+(base-6)+'" text-anchor="middle">–</text>'}
+    else{
+      var h=Math.max(2,v/max*H);
+      s+='<rect class="bar'+(sel?' sel':'')+'"'+(sel?' style="fill:url(#'+gid+')"':'')+' x="'+(cx-bw/2)+'" y="'+(base-h)+'" width="'+bw+'" height="'+h+'" rx="4"/>';
+      if(n<=6||sel||i===maxI)s+='<text class="val'+(sel?' sel':'')+'" style="'+fsz+'" x="'+cx+'" y="'+(base-h-5)+'" text-anchor="middle">'+fmtV(v)+'</text>';
+    }
+    s+='<text class="lbl'+(sel?' sel':'')+'" style="'+fsz+'" x="'+cx+'" y="132" text-anchor="middle">'+labels[i]+'</text>';
+  });
+  return s+'</svg>';
+}
+function renderCtrl(){
+  if(ctrlScope!=='all'&&!apById(ctrlScope))ctrlScope='all';
+  var ids=ctrlScope==='all'?state.aps.map(function(a){return a.id}):[ctrlScope],n=ctrlN,months=[],i;
+  for(i=n-1;i>=0;i--)months.push(addM(state.mes,-i));
+  var data=months.map(function(m){return agg(ids,m)});
+  var totCons=0,totFat=0,live=0;
+  data.forEach(function(d){totCons+=d.cons;totFat+=d.total;if(d.n>0)live++});
+  totCons=r2(totCons);totFat=r2(totFat);
+  var avg=live?totCons/live:0,cur=data[n-1],prev=data[n-2];
+  var isAll=ctrlScope==='all',scopeName=isAll?'todos os aps':'Ap '+apById(ctrlScope).un;
+  var h='<div class="scope" role="group" aria-label="Escolher apartamento"><button class="chip'+(isAll?' on':'')+'" type="button" data-scope="all" aria-pressed="'+isAll+'">Geral</button>'+
+    state.aps.map(function(a){var on=a.id===ctrlScope;return '<button class="chip'+(on?' on':'')+'" type="button" data-scope="'+esc(a.id)+'" aria-pressed="'+on+'">Ap '+esc(a.un||'—')+'</button>'}).join('')+'</div>';
+  h+='<div class="card tight stack"><div class="stepper">'+stepperHTML()+'</div><div class="seg" role="group" aria-label="Período"><button type="button" data-n="6" aria-pressed="'+(n===6)+'">6 meses</button><button type="button" data-n="12" aria-pressed="'+(n===12)+'">12 meses</button></div></div>';
+  if(live===0){
+    h+='<div class="card empty"><p><strong>Sem leituras neste período.</strong></p><p class="hint">Lance a leitura na aba Leitura para ver os números aqui.</p></div>';
+    el.ctrl.innerHTML=h;return;
+  }
+  var mname=mesLong(state.mes);
+  var sFat=isAll?cur.n+' de '+ids.length+' aps lançados':varTxt(cur.n?cur.total:null,prev&&prev.n?prev.total:null);
+  var sCons=isAll?(cur.n?kwh(cur.cons/cur.n)+' kWh por ap':'sem leituras no mês'):varTxt(cur.n?cur.cons:null,prev&&prev.n?prev.cons:null);
+  h+='<h2 class="sec">Resumo · '+(isAll?'Geral':scopeName)+'</h2><div class="kpis">'+
+    '<div class="kpi main"><span class="k">Faturamento · '+n+' meses</span><span class="v">'+brl(totFat)+'</span><span class="s">em '+live+(live===1?' mês':' meses')+' com leitura</span></div>'+
+    '<div class="kpi"><span class="k">Consumo · '+n+' meses</span><span class="v">'+kwh(totCons)+' kWh</span><span class="s">média '+kwh(avg)+' kWh/mês</span></div>'+
+    '<div class="kpi"><span class="k">Faturamento de '+mname+'</span><span class="v">'+brl(cur.total)+'</span><span class="s">'+sFat+'</span></div>'+
+    '<div class="kpi"><span class="k">Consumo de '+mname+'</span><span class="v">'+kwh(cur.cons)+' kWh</span><span class="s">'+sCons+'</span></div></div>';
+  var labels=months.map(function(m){return mes3(m)});
+  h+='<h2 class="sec">Gráficos mensais</h2><div class="stack"><div class="card"><p class="chart-t" style="margin:0">Consumo mensal (kWh) · '+esc(scopeName)+'</p>'+
+    barSVG(data.map(function(d){return d.n?d.cons:null}),labels,kwh,'Consumo mensal em kWh')+'</div>'+
+    '<div class="card"><p class="chart-t" style="margin:0">Faturamento mensal (R$) · '+esc(scopeName)+'</p>'+
+    barSVG(data.map(function(d){return d.n?d.total:null}),labels,function(v){return fmt(v,0,0)},'Faturamento mensal em reais')+'</div></div>';
+  if(isAll){
+    var pend=state.aps.filter(function(a){return !saved(a.id,state.mes)});
+    h+='<h2 class="sec">Por apartamento · '+mesTxt(state.mes)+'</h2><div class="stack">';
+    if(pend.length)h+='<p class="cmp up">Sem leitura em '+mname+': '+pend.map(function(a){return 'Ap '+esc(a.un)}).join(', ')+'</p>';
+    var rows='',tc=0,tf=0;
+    state.aps.forEach(function(a){
+      var cc=calc(a,state.mes);
+      if(cc){tc+=cc.cons;tf+=cc.total}
+      rows+='<tr><td><button class="lnk" type="button" data-scope="'+esc(a.id)+'">Ap '+esc(a.un)+'</button>'+(a.morador?'<span class="sub">'+esc(a.morador)+'</span>':'')+'</td><td class="r">'+(cc?kwh(cc.cons):'—')+'</td><td class="r">'+(cc?fmt(cc.total):'—')+'</td><td>'+(cc?'<span class="tag ok">Lançada</span>':'<span class="tag pend">Pendente</span>')+'</td></tr>';
+    });
+    h+='<div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Ap</th><th class="r">kWh</th><th class="r">R$</th><th>Situação</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr><td>Total</td><td class="r">'+kwh(r2(tc))+'</td><td class="r">'+fmt(r2(tf))+'</td><td></td></tr></tfoot></table></div></div></div>';
+  }else{
+    var a=apById(ctrlScope),rows2='';
+    months.slice().reverse().forEach(function(m,idx){
+      var d=data[n-1-idx],pd=data[n-2-idx];
+      var dv=(d.n&&pd&&pd.n&&pd.cons>0)?Math.round((d.cons-pd.cons)/pd.cons*100):null;
+      rows2+='<tr><td>'+cap(mes3(m))+'/'+m.slice(2,4)+'</td><td class="r">'+(d.n?kwh(d.cons):'—')+'</td><td class="r">'+(d.n?fmt(d.total):'—')+'</td><td class="delta">'+(dv==null?'':(dv>0?'▲ ':dv<0?'▼ ':'')+Math.abs(dv)+'%')+'</td></tr>';
+    });
+    h+='<h2 class="sec">Histórico · Ap '+esc(a.un)+(a.morador?' · '+esc(a.morador):'')+'</h2><div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Mês</th><th class="r">kWh</th><th class="r">R$</th><th>Var.</th></tr></thead><tbody>'+rows2+'</tbody></table></div></div>';
+  }
+  el.ctrl.innerHTML=h;
+}
+
+/* ---------- tela de pagamento (aberta pelo link enviado ao morador) ---------- */
+function payData(){
+  var h=location.hash||'';
+  if(h.indexOf('#pagar=')!==0)return null;
+  try{
+    var d=JSON.parse(unb64u(h.slice(7)));
+    if(!d||typeof d.c!=='string'||!/^[\x20-\x7E]{20,700}$/.test(d.c)||d.c.indexOf('br.gov.bcb.pix')<0)return null;
+    return {c:d.c,t:Number(d.t)||0,v:String(d.v||'').slice(0,20),m:String(d.m||'').slice(0,30),u:String(d.u||'').slice(0,20),r:String(d.r||'').slice(0,60)};
+  }catch(e){return null}
+}
+function showPay(d){
+  document.body.setAttribute('data-mode','pay');
+  document.title='Pagamento PIX';
+  $('#pay-r').textContent=d.r;
+  $('#pay-v').textContent=brl(d.t);
+  $('#pay-m').textContent=d.u+' · '+d.m;
+  $('#pay-d').textContent=d.v;
+  $('#pay-code').textContent=d.c;
+  $('#pay').hidden=false;
+  var b=$('#pay-copy'),lab=b.textContent;
+  b.addEventListener('click',function(){
+    var ok=function(){b.textContent='Código copiado';setTimeout(function(){b.textContent=lab},2500)};
+    var fb=function(){var r=document.createRange();r.selectNodeContents($('#pay-code'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Código selecionado: toque em Copiar'};
+    try{navigator.clipboard.writeText(d.c).then(ok,fb)}catch(e){fb()}
+  });
+}
+
 
 /* ---------- eventos ---------- */
 document.addEventListener('click',function(e){
   var st=e.target.closest('[data-step]');
   if(st){
     state.mes=addM(state.mes,Number(st.dataset.step));
-    if(state.tab==='leitura')loadForm();else{renderMonth();renderDemo()}
+    if(state.tab==='leitura')loadForm();else if(state.tab==='ctrl')renderCtrl();else{renderMonth();renderDemo()}
     return;
   }
   var tb=e.target.closest('.tab[data-tab]');
@@ -2190,12 +1098,18 @@ el.chips.addEventListener('click',function(e){
     if(state.tab==='demo')renderDemo();
   }
 });
+el.ctrl.addEventListener('click',function(e){
+  var sc=e.target.closest('[data-scope]');
+  if(sc){ctrlScope=sc.dataset.scope;renderCtrl();window.scrollTo(0,0);return}
+  var nb=e.target.closest('[data-n]');
+  if(nb){ctrlN=Number(nb.dataset.n)===12?12:6;renderCtrl()}
+});
 function addAp(){
   var max=0;state.aps.forEach(function(a){var n=parseInt(a.un,10);if(n>max)max=n});
   var a={id:newId(),un:pad(max+1),morador:'',fone:''};
   state.aps.push(a);state.sel=a.id;persist();
   renderChips();loadForm();
-  if(state.tab==='demo')setTab('leitura');
+  if(state.tab!=='leitura')setTab('leitura');
   el.mor.focus();
   var c=el.chips;c.scrollLeft=c.scrollWidth;
 }
@@ -2209,6 +1123,7 @@ el.delAsk.addEventListener('click',function(){el.delAsk.hidden=true;el.delConfir
 $('#delNo').addEventListener('click',function(){el.delConfirm.hidden=true;el.delAsk.hidden=false});
 $('#delYes').addEventListener('click',function(){
   var id=state.sel;
+  if(ctrlScope===id)ctrlScope='all';
   state.aps=state.aps.filter(function(a){return a.id!==id});
   delete state.leit[id];
   state.sel=state.aps[0].id;persist();renderChips();loadForm();
@@ -2248,6 +1163,7 @@ function closeSheet(){
   el.sheet.hidden=true;
   $('#openCfg').focus();
   if(state.tab==='demo')renderDemo();
+  if(state.tab==='ctrl')renderCtrl();
 }
 $('#openCfg').addEventListener('click',openSheet);
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSheet()});
@@ -2265,9 +1181,8 @@ $('#s-pix').addEventListener('input',function(e){state.cfg.pix=e.target.value;pe
 $('#s-rec').addEventListener('input',function(e){state.cfg.recebedor=e.target.value;persist()});
 $('#s-cid').addEventListener('input',function(e){state.cfg.cidade=e.target.value;persist()});
 
-setSync('local');
-renderAll();
-initCloud();
+var pd0=payData();
+if(pd0){showPay(pd0)}else{setSync('local');renderAll();initCloud()}
 })();
 </script>
 </body>
